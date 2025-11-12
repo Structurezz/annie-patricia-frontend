@@ -164,7 +164,7 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
 
           <div className="flex flex-col sm:flex-row gap-4">
             <motion.a
-              href="/shop"
+              href="/category"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-white text-black px-10 py-4 font-medium tracking-wider rounded-md shadow-lg hover:bg-gray-100 transition"
@@ -172,7 +172,7 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
               SHOP WOMEN
             </motion.a>
             <motion.a
-              href="/shop"
+              href="/category"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="border border-white px-10 py-4 font-medium tracking-wider rounded-md hover:bg-white hover:text-black transition"
