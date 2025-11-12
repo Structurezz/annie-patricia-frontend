@@ -25,12 +25,14 @@ import {
   
             {/* SHOP */}
             <Link
-              to="/category"
-              className="flex flex-col items-center gap-1 text-xs font-medium text-gray-600 hover:text-black transition"
-            >
-              <ShoppingBagIcon className="w-6 h-6" />
-              <span>SHOP</span>
-            </Link>
+  to="/category"
+  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+  className="flex flex-col items-center gap-1 text-xs font-medium text-gray-600 hover:text-black transition"
+>
+  <ShoppingBagIcon className="w-6 h-6" />
+  <span>SHOP</span>
+</Link>
+
   
             {/* SAVED */}
             <Link
