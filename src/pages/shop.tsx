@@ -424,91 +424,192 @@ React.useEffect(() => {
       </div>
 
       {/* MOBILE FILTERS – Opens under Topbar */}
-      <AnimatePresence>
+           {/* ---------- MOBILE FILTER DRAWER – MENU STYLE ---------- */}
+           <AnimatePresence>
         {mobileFiltersOpen && (
-          <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-0 z-50 bg-white md:hidden overflow-y-auto pt-16" // ← Starts below Topbar
-          >
-            <div className="sticky top-0 bg-white border-b z-10 p-4 flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Filters</h2>
-              <button onClick={() => setMobileFiltersOpen(false)}>
-                <XMarkIcon className="w-6 h-6" />
-              </button>
-            </div>
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileFiltersOpen(false)}
+              className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            />
 
-            <div className="p-5 space-y-7">
-              {/* Category */}
-              <div>
-                <h3 className="text-sm font-semibold tracking-wider mb-3">CATEGORY</h3>
-                <div className="space-y-2">
-                  {productCategories.map((cat) => (
-                    <label key={cat} className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="category"
-                        checked={selectedCategory === cat}
-                        onChange={() => {
-                          setSelectedCategory(cat);
-                          setCurrentPage(1);
-                        }}
-                        className="w-4 h-4 text-black focus:ring-black"
-                      />
-                      <span className="text-sm">{cat}</span>
-                    </label>
-                  ))}
+            {/* Filter Panel – Full Screen, White */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 32, stiffness: 320 }}
+              className="fixed inset-0 bg-white z-50 md:hidden overflow-y-auto"
+            >
+              <div className="flex flex-col h-full">
+                {/* Header */}
+                <div className="flex justify-between items-center p-6 border-b border-gray-200">
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+                    
+                  </h1>
+                  <button
+                    onClick={() => setMobileFiltersOpen(false)}
+                    className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-all hover:scale-110"
+                  >
+                    <XMarkIcon className="h-6 w-6 text-gray-700" />
+                  </button>
+                </div>
+
+                {/* Main Content */}
+                <nav className="flex-1 p-6">
+                  {/* Category Grid */}
+                  <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                    {productCategories.map((cat, index) => (
+                      <motion.div
+                        key={cat}
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ delay: index * 0.1, type: "spring", stiffness: 400 }}
+                        className="group"
+                      >
+                        <button
+                          onClick={() => {
+                            setSelectedCategory(cat);
+                            setCurrentPage(1);
+                            setMobileFiltersOpen(false);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          className={`
+                            relative flex flex-col items-center justify-center p-6 rounded-2xl transition-all duration-300 w-full
+                            ${selectedCategory === cat
+                              ? "bg-red-600/10 text-red-600 shadow-lg ring-2 ring-red-600/20"
+                              : "bg-gray-50 text-gray-800 hover:bg-red-600/5 hover:text-red-600"
+                            }
+                            group-hover:shadow-xl group-hover:-translate-y-1
+                          `}
+                        >
+                          <div className="mb-2">
+                            {cat === "DRESSES" && (
+                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M7 3h10l-1.5 7H8.5L7 3zM6 10h12l-1.5 7H7.5L6 10z" />
+                              </svg>
+                            )}
+                            {cat === "TOPS" && (
+                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 12h3v8h14v-8h3L12 2z" />
+                              </svg>
+                            )}
+                            {cat === "BOTTOMS" && (
+                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 12h3v8h14v-8h3L12 2z" />
+                              </svg>
+                            )}
+                            {cat === "ACCESSORIES" && (
+                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <circle cx="12" cy="12" r="4" fill="white" />
+                              </svg>
+                            )}
+                            {cat === "SHOES" && (
+                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 16v-2l-8-5V3h-2v6l-8 5v2l8-2.5V19h2v-5.5l8 2.5z" />
+                              </svg>
+                            )}
+                            {cat === "ALL" && (
+                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M8 8h8v8H8z" fill="white" />
+                              </svg>
+                            )}
+                          </div>
+                          <span className="text-sm font-semibold tracking-wide">{cat}</span>
+                        </button>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Subcategory */}
+                  <div className="mt-10 px-4">
+                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Subcategory</h3>
+                    <motion.select
+                      whileTap={{ scale: 0.98 }}
+                      value={selectedSubcategory}
+                      onChange={(e) => {
+                        setSelectedSubcategory(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      className="w-full text-sm border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-600/30 transition-all"
+                    >
+                      {subcategories.map((sub) => (
+                        <option key={sub} value={sub}>{sub}</option>
+                      ))}
+                    </motion.select>
+                  </div>
+
+                  {/* Price Range */}
+                  <div className="mt-8 px-4">
+                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">
+                      Price: ₦{priceRange[0].toLocaleString()} - ₦{priceRange[1].toLocaleString()}
+                    </h3>
+                    <input
+                      type="range"
+                      min="0"
+                      max="500000"
+                      step="5000"
+                      value={priceRange[1]}
+                      onChange={(e) => {
+                        setPriceRange([priceRange[0], Number(e.target.value)]);
+                        setCurrentPage(1);
+                      }}
+                      className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer"
+                      style={{
+                        background: `linear-gradient(to right, #dc2626 0%, #dc2626 ${(priceRange[1] / 500000) * 100}%, #e5e7eb ${(priceRange[1] / 500000) * 100}%, #e5e7eb 100%)`,
+                      }}
+                    />
+                    <style jsx>{`
+                      input[type="range"]::-webkit-slider-thumb {
+                        appearance: none;
+                        width: 18px;
+                        height: 18px;
+                        background: #dc2626;
+                        border-radius: 50%;
+                        cursor: grab;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                      }
+                      input[type="range"]::-webkit-slider-thumb:active {
+                        cursor: grabbing;
+                        transform: scale(1.2);
+                      }
+                    `}</style>
+                  </div>
+
+                  {/* Clear All */}
+                  <div className="mt-8 px-4">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        setSelectedCategory("ALL");
+                        setSelectedSubcategory("All Subcategories");
+                        setPriceRange([0, 500000]);
+                        setCurrentPage(1);
+                        setMobileFiltersOpen(false);
+                      }}
+                      className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white font-medium py-3 rounded-xl hover:shadow-lg transition-all"
+                    >
+                      Clear All Filters
+                    </motion.button>
+                  </div>
+                </nav>
+
+                {/* Footer */}
+                <div className="p-6 border-t border-gray-200 text-center">
+                  <p className="text-xs text-gray-500">
+                    {filteredAndSorted.length} {filteredAndSorted.length === 1 ? "item" : "items"} found
+                  </p>
                 </div>
               </div>
-
-              {/* Subcategory */}
-              <div>
-                <h3 className="text-sm font-semibold tracking-wider mb-3">SUBCATEGORY</h3>
-                <select
-                  value={selectedSubcategory}
-                  onChange={(e) => {
-                    setSelectedSubcategory(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="w-full text-sm border border-gray-300 rounded-md px-3 py-2"
-                >
-                  {subcategories.map((sub) => (
-                    <option key={sub} value={sub}>
-                      {sub}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Price Range */}
-              <div>
-                <h3 className="text-sm font-semibold tracking-wider mb-3">
-                  PRICE: ₦{priceRange[0].toLocaleString()} - ₦{priceRange[1].toLocaleString()}
-                </h3>
-                <input
-                  type="range"
-                  min="0"
-                  max="500000"
-                  step="5000"
-                  value={priceRange[1]}
-                  onChange={(e) => {
-                    setPriceRange([priceRange[0], Number(e.target.value)]);
-                    setCurrentPage(1);
-                  }}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
-
-              <button
-                onClick={() => setMobileFiltersOpen(false)}
-                className="w-full py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition"
-              >
-                Apply Filters
-              </button>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
