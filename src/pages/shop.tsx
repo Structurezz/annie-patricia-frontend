@@ -1,8 +1,7 @@
-
 "use client";
 
 import React, { useMemo } from "react";
-import { Link, useLocation  } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Topbar from "../components/TopBar";
 import Footer from "../components/Footer";
@@ -94,11 +93,40 @@ const Shop: React.FC = () => {
     }));
   };
 
-React.useEffect(() => {
+  // Read category from URL on every change
+  React.useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const categoryFromURL = params.get("category");
-    if (categoryFromURL) {
-      setSelectedCategory(categoryFromURL);
+    const raw = params.get("category");
+  
+    if (!raw) {
+      setSelectedCategory("ALL");
+      setCurrentPage(1);
+      return;
+    }
+  
+    // ---- NORMALISE ----
+    const normalised = raw
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, ""); // remove spaces if any
+  
+    // Find a product that has the same normalised category
+    const matchingProduct = allProducts.find(p => {
+      const prodCat = (p.category || "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "");
+      return prodCat === normalised;
+    });
+  
+    if (matchingProduct) {
+      // Use the **exact** value from the product (preserves original case)
+      setSelectedCategory(matchingProduct.category);
+      setCurrentPage(1);
+    } else {
+      // Unknown category → fallback to ALL
+      setSelectedCategory("ALL");
+      setCurrentPage(1);
     }
   }, [location.search]);
 
@@ -107,7 +135,7 @@ React.useEffect(() => {
       {/* Top Navigation */}
       <Topbar />
 
-      {/* HERO BANNER – Starts below Topbar */}
+      {/* HERO BANNER */}
       <section className="relative h-64 md:h-40 overflow-hidden bg-black">
         <img
           src="https://media.istockphoto.com/id/2180538528/photo/colorful-shopping-bags-on-a-bed.jpg?s=612x612&w=0&k=20&c=Iv6x7bK3f-XSiRRWn6o9VAXNt_lCxwquU-vVtmBB7H0="
@@ -125,8 +153,8 @@ React.useEffect(() => {
         </div>
       </section>
 
-      {/* FILTERS BAR – Sticky BELOW Topbar */}
-      <div className="sticky top-16 z-40 bg-white border-b shadow-sm"> {/* 64px = Topbar height */}
+      {/* FILTERS BAR */}
+      <div className="sticky top-16 z-40 bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button
@@ -172,7 +200,7 @@ React.useEffect(() => {
         </div>
       </div>
 
-      {/* MAIN CONTENT – Starts below Filters */}
+      {/* MAIN CONTENT */}
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="flex gap-6 md:gap-8">
           {/* Desktop Sidebar */}
@@ -183,17 +211,19 @@ React.useEffect(() => {
                 <ul className="space-y-2">
                   {productCategories.map((cat) => (
                     <li key={cat}>
-                      <button
+                      <Link
+                        to={`/category?category=${cat}`}
+                        replace={selectedCategory === cat}
+                        className={`block w-full text-left text-sm ${
+                          selectedCategory === cat ? "font-medium text-black" : "text-gray-600 hover:text-black"
+                        }`}
                         onClick={() => {
                           setSelectedCategory(cat);
                           setCurrentPage(1);
                         }}
-                        className={`block w-full text-left text-sm ${
-                          selectedCategory === cat ? "font-medium text-black" : "text-gray-600 hover:text-black"
-                        }`}
                       >
                         {cat}
-                      </button>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -248,6 +278,7 @@ React.useEffect(() => {
                     setSelectedSubcategory("All Subcategories");
                     setPriceRange([0, 500000]);
                     setCurrentPage(1);
+                    window.history.replaceState({}, "", "/category");
                   }}
                   className="mt-4 text-sm underline"
                 >
@@ -423,12 +454,10 @@ React.useEffect(() => {
         </div>
       </div>
 
-      {/* MOBILE FILTERS – Opens under Topbar */}
-           {/* ---------- MOBILE FILTER DRAWER – MENU STYLE ---------- */}
-           <AnimatePresence>
+      {/* MOBILE FILTERS */}
+      <AnimatePresence>
         {mobileFiltersOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -437,7 +466,6 @@ React.useEffect(() => {
               className="fixed inset-0 bg-black/50 z-40 md:hidden"
             />
 
-            {/* Filter Panel – Full Screen, White */}
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
@@ -446,10 +474,9 @@ React.useEffect(() => {
               className="fixed inset-0 bg-white z-50 md:hidden overflow-y-auto"
             >
               <div className="flex flex-col h-full">
-                {/* Header */}
                 <div className="flex justify-between items-center p-6 border-b border-gray-200">
                   <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-                    
+                    Filters
                   </h1>
                   <button
                     onClick={() => setMobileFiltersOpen(false)}
@@ -459,7 +486,6 @@ React.useEffect(() => {
                   </button>
                 </div>
 
-                {/* Main Content */}
                 <nav className="flex-1 p-6">
                   {/* Category Grid */}
                   <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
@@ -476,6 +502,7 @@ React.useEffect(() => {
                             setSelectedCategory(cat);
                             setCurrentPage(1);
                             setMobileFiltersOpen(false);
+                            window.history.pushState({}, "", `/category?category=${cat}`);
                             window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
                           className={`
@@ -593,6 +620,7 @@ React.useEffect(() => {
                         setPriceRange([0, 500000]);
                         setCurrentPage(1);
                         setMobileFiltersOpen(false);
+                        window.history.replaceState({}, "", "/category");
                       }}
                       className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white font-medium py-3 rounded-xl hover:shadow-lg transition-all"
                     >
@@ -601,7 +629,6 @@ React.useEffect(() => {
                   </div>
                 </nav>
 
-                {/* Footer */}
                 <div className="p-6 border-t border-gray-200 text-center">
                   <p className="text-xs text-gray-500">
                     {filteredAndSorted.length} {filteredAndSorted.length === 1 ? "item" : "items"} found
@@ -614,7 +641,7 @@ React.useEffect(() => {
       </AnimatePresence>
 
       <Footer />
-      </>
+    </>
   );
 };
 

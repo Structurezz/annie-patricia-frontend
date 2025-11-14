@@ -6,7 +6,23 @@ import { useAppSelector } from "../hooks/redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { categories as productCategories } from "../components/data/products";
 
-// --- SVG ICONS ---
+// --- HEROICONS (already in your project) ---
+import {
+  ChevronDownIcon,
+  UserIcon as UserOutline,
+  ArchiveBoxIcon,
+  ArrowLeftIcon,
+  EnvelopeIcon,
+  GlobeAltIcon,
+  TruckIcon,
+  ArrowPathIcon,
+  QuestionMarkCircleIcon,
+  BuildingStorefrontIcon,
+  GiftIcon,
+  DevicePhoneMobileIcon,
+} from "@heroicons/react/24/outline";
+
+// --- SVG ICONS (kept for topbar) ---
 const MenuIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <line x1="3" y1="12" x2="21" y2="12" strokeWidth={2} />
@@ -19,13 +35,6 @@ const SearchIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <circle cx="11" cy="11" r="8" strokeWidth={2} />
     <line x1="21" y1="21" x2="16.65" y2="16.65" strokeWidth={2} />
-  </svg>
-);
-
-const UserIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <circle cx="12" cy="7" r="4" strokeWidth={2} />
-    <path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2" strokeWidth={2} />
   </svg>
 );
 
@@ -61,7 +70,6 @@ const TopBar: React.FC = () => {
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
-  const isActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -73,12 +81,11 @@ const TopBar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ALL CATEGORIES – NO SLICE
   const currentSubNav = productCategories.map(cat => cat.toUpperCase());
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
-      {/* ---------- MOBILE TOPBAR – ASOS STYLE ---------- */}
+      {/* ---------- MOBILE TOPBAR ---------- */}
       <div className="sm:hidden flex items-center justify-between p-3 bg-black text-white">
         <button onClick={toggleMobileMenu} aria-label="Open menu">
           <MenuIcon className="h-6 w-6" />
@@ -93,7 +100,7 @@ const TopBar: React.FC = () => {
             <SearchIcon className="h-6 w-6" />
           </button>
           <Link to="/account" className="p-1">
-            <UserIcon className="h-6 w-6" />
+            <UserOutline className="h-6 w-6" />
           </Link>
           <Link to="/wishlist" className="p-1">
             <HeartIcon className="h-6 w-6" />
@@ -109,7 +116,7 @@ const TopBar: React.FC = () => {
         </div>
       </div>
 
-      {/* ---------- MOBILE MENU – FULL SCROLL + NO FOOTER OVERLAY ---------- */}
+      {/* ---------- MOBILE MENU ---------- */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -154,13 +161,13 @@ const TopBar: React.FC = () => {
               </div>
 
               {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto pb-safe"> {/* ← FIX: pb-safe */}
+              <div className="flex-1 overflow-y-auto pb-safe">
                 <div className="p-4 space-y-6">
 
                   {/* HOME */}
                   <Link to="/" onClick={toggleMobileMenu} className="flex items-center gap-3 py-2">
                     <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
-                      <img src="/api/placeholder/48/48" alt="Home" className="w-full h-full object-cover" />
+                      <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=48&h=48&fit=crop" alt="Home" className="w-full h-full object-cover" />
                     </div>
                     <span className="font-medium">HOME</span>
                   </Link>
@@ -172,16 +179,20 @@ const TopBar: React.FC = () => {
                     <p className="text-sm mt-1">Up to 60% off</p>
                   </div>
 
-                  {/* ALL CATEGORIES – NO LIMIT */}
+                  {/* ALL CATEGORIES */}
                   {currentSubNav.map((cat) => (
                     <Link
                       key={cat}
-                      to={`/category?gender=${activeGender}&category=${cat}`}
+                      to={`/category?category=${cat}`}
                       onClick={toggleMobileMenu}
                       className="flex items-center gap-3 py-2"
                     >
                       <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
-                        <img src={`/api/placeholder/48/48`} alt={cat} className="w-full h-full object-cover" />
+                        <img
+                          src={`https://images.unsplash.com/photo-1490481651871-ab68de7d43df?w=48&h=48&fit=crop&sat=-100`}
+                          alt={cat}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <span className="font-medium">{cat}</span>
                     </Link>
@@ -199,10 +210,20 @@ const TopBar: React.FC = () => {
                   </div>
 
                   {/* Social & Sign In */}
-                  <div className="flex justify-center gap-4 py-4">
-                    <a href="#" className="p-2"><svg className="w-6 h-6" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="18" cy="6" r="1.5" /></svg></a>
-                    <a href="#" className="p-2"><svg className="w-6 h-6" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15h-2.5v-3H8v-2c0-1.1.9-2 2-2h2v3h2.5v3H12v6.8c4.56-.93 8-4.96 8-9.8z" /></svg></a>
-                    <a href="#" className="p-2"><svg className="w-6 h-6" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04 4.27 4.27 0 0 0-7.28 3.9A12.12 12.12 0 0 1 3 4.79a4.27 4.27 0 0 0 1.32 5.7 4.22 4.22 0 0 1-1.93-.53v.05a4.27 4.27 0 0 0 3.43 4.18 4.27 4.27 0 0 1-1.92.07 4.27 4.27 0 0 0 3.98 2.96A8.56 8.56 0 0 1 2 19.54a12.07 12.07 0 0 0 6.56 1.92c7.87 0 12.18-6.53 12.18-12.18 0-.19-.01-.37-.02-.55A8.7 8.7 0 0 0 22.46 6z" /></svg></a>
+                  <div className="flex justify-center gap-6 py-4">
+                    <a href="#" className="p-2">
+                      <GlobeAltIcon className="w-6 h-6 text-gray-700" />
+                    </a>
+                    <a href="#" className="p-2">
+                      <svg className="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15h-2.5v-3H8v-2c0-1.1.9-2 2-2h2v3h2.5v3H12v6.8c4.56-.93 8-4.96 8-9.8z" />
+                      </svg>
+                    </a>
+                    <a href="#" className="p-2">
+                      <svg className="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04 4.27 4.27 0 0 0-7.28 3.9A12.12 12.12 0 0 1 3 4.79a4.27 4.27 0 0 0 1.32 5.7 4.22 4.22 0 0 1-1.93-.53v.05a4.27 4.27 0 0 0 3.43 4.18 4.27 4.27 0 0 1-1.92.07 4.27 4.27 0 0 0 3.98 2.96A8.56 8.56 0 0 1 2 19.54a12.07 12.07 0 0 0 6.56 1.92c7.87 0 12.18-6.53 12.18-12.18 0-.19-.01-.37-.02-.55A8.7 8.7 0 0 0 22.46 6z" />
+                      </svg>
+                    </a>
                   </div>
 
                   <div className="text-center text-sm">
@@ -214,47 +235,56 @@ const TopBar: React.FC = () => {
                   {/* Account Links */}
                   <div className="space-y-3 py-4 border-t">
                     {[
-                      { label: "My Account", icon: "User" },
-                      { label: "My Orders", icon: "Package" },
-                      { label: "Returns Information", icon: "Arrow Left" },
-                      { label: "Contact Preferences", icon: "Mail" },
+                      { label: "My Account", Icon: UserOutline },
+                      { label: "My Orders", Icon: ArchiveBoxIcon },
+                      { label: "Returns Information", Icon: ArrowPathIcon },
+                      { label: "Contact Preferences", Icon: EnvelopeIcon },
                     ].map((item) => (
                       <Link
                         key={item.label}
                         to="#"
                         onClick={toggleMobileMenu}
-                        className="flex items-center gap-3 py-2 text-sm"
+                        className="flex items-center gap-3 py-2 text-sm text-gray-700"
                       >
-                        <span>{item.icon}</span>
+                        <item.Icon className="w-5 h-5" />
                         <span>{item.label}</span>
                       </Link>
                     ))}
                   </div>
 
-                  {/* Help & Info */}
+                  {/* Help & Info – with REAL ICONS */}
                   <div className="space-y-3 py-4 border-t text-sm">
                     <details className="group">
-                      <summary className="flex justify-between items-center cursor-pointer font-medium">
+                      <summary className="flex justify-between items-center cursor-pointer font-medium text-gray-800">
                         Help & Information
-                        <span className="group-open:rotate-180 transition">Down Arrow</span>
+                        <ChevronDownIcon className="w-4 h-4 text-gray-600 group-open:rotate-180 transition-transform" />
                       </summary>
                       <div className="mt-2 pl-6 space-y-2 text-gray-600">
-                        <Link to="#">Delivery</Link>
-                        <Link to="#">Returns</Link>
-                        <Link to="#">Help Center</Link>
+                        <Link to="#" className="flex items-center gap-2"><TruckIcon className="w-4 h-4" /> Delivery</Link>
+                        <Link to="#" className="flex items-center gap-2"><ArrowPathIcon className="w-4 h-4" /> Returns</Link>
+                        <Link to="#" className="flex items-center gap-2"><QuestionMarkCircleIcon className="w-4 h-4" /> Help Center</Link>
                       </div>
                     </details>
+
                     <details className="group">
-                      <summary className="flex justify-between items-center cursor-pointer font-medium">
-                        About ASOS
-                        <span className="group-open:rotate-180 transition">Down Arrow</span>
+                      <summary className="flex justify-between items-center cursor-pointer font-medium text-gray-800">
+                        About Annie Patricia
+                        <ChevronDownIcon className="w-4 h-4 text-gray-600 group-open:rotate-180 transition-transform" />
                       </summary>
+                      <div className="mt-2 pl-6 space-y-2 text-gray-600">
+                        <Link to="#" className="flex items-center gap-2"><BuildingStorefrontIcon className="w-4 h-4" /> Our Story</Link>
+                        <Link to="#" className="flex items-center gap-2"><GiftIcon className="w-4 h-4" /> Gift Cards</Link>
+                      </div>
                     </details>
+
                     <details className="group">
-                      <summary className="flex justify-between items-center cursor-pointer font-medium">
-                        More from ASOS
-                        <span className="group-open:rotate-180 transition">Down Arrow</span>
+                      <summary className="flex justify-between items-center cursor-pointer font-medium text-gray-800">
+                        More from Us
+                        <ChevronDownIcon className="w-4 h-4 text-gray-600 group-open:rotate-180 transition-transform" />
                       </summary>
+                      <div className="mt-2 pl-6 space-y-2 text-gray-600">
+                        <Link to="#" className="flex items-center gap-2"><DevicePhoneMobileIcon className="w-4 h-4" /> Download App</Link>
+                      </div>
                     </details>
                   </div>
 
@@ -270,7 +300,7 @@ const TopBar: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* ---------- DESKTOP HEADER – UNCHANGED ---------- */}
+      {/* ---------- DESKTOP HEADER ---------- */}
       <div className="hidden sm:block bg-black text-white">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold">
@@ -311,7 +341,7 @@ const TopBar: React.FC = () => {
 
           <div className="flex items-center gap-6">
             <Link to="/account" className="hover:text-gray-300 transition">
-              <UserIcon className="h-6 w-6" />
+              <UserOutline className="h-6 w-6" />
             </Link>
             <Link to="/wishlist" className="hover:text-gray-300 transition">
               <HeartIcon className="h-6 w-6" />
@@ -333,7 +363,7 @@ const TopBar: React.FC = () => {
               {currentSubNav.map((cat) => (
                 <Link
                   key={cat}
-                  to={`/category?gender=${activeGender}&category=${cat}`}
+                  to={`/category?category=${cat}`}
                   className="hover:text-red-600 transition"
                 >
                   {cat}
