@@ -17,6 +17,8 @@ import {
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import CategoryModal from "../components/CategoryModal";
+import { categories as productCategories } from "../components/data/products";
+
 
 // ---------- REDUX ----------
 import { useAppDispatch, useAppSelector } from "../store/hooks";   // <-- create this file
@@ -42,6 +44,19 @@ interface Look {
   description: string;
   image: string;
 }
+
+const generatePlaceholder = (text: string, width = 400, height = 600) => {
+  const encodedText = encodeURIComponent(text || "No Image");
+  return `https://via.placeholder.com/${width}x${height}/eeeeee/999999?text=${encodedText}`;
+};
+// Helper: safely get image
+function getSafeImage(img) {
+  if (!img || typeof img !== "string" || img.trim() === "") {
+    return "/images/placeholder-book.png"; // your existing placeholder asset
+  }
+  return img;
+}
+
 
 const Home: React.FC = () => {
   // ---------- WISHLIST (localStorage) ----------
@@ -128,6 +143,8 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
     <div className="min-h-screen flex flex-col bg-stone-50">
       {/* Pass live counts to Topbar */}
       <Topbar wishlistCount={wishlist.size} cartCount={cartCount} />
+      
+
 
       {/* HERO VIDEO SECTION */}
       <section className="relative h-screen overflow-hidden">
@@ -196,7 +213,7 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
   initial={{ opacity: 0, y: -20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ delay: 1.2 }}
-  className={`fixed top-24 left-1/2 -translate-x-1/2 z-40 transition-all duration-300 ${
+  className={`fixed top-32 left-1/2 -translate-x-1/2 z-40 transition-all duration-300 ${
     scrolled ? "top-20 bg-white/90 backdrop-blur-lg shadow-md" : "top-32 bg-white/100"
   } rounded-full px-6 py-3 hidden md:flex gap-6`}
 >
@@ -230,63 +247,30 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
 )}
 
       {/* SHOP BY CATEGORY CAROUSEL */}
-      <section className="py-24 px-6 md:px-12 bg-white">
-  <div className="container mx-auto max-w-7xl">
-    <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      className="text-center mb-16"
-    >
-      <h2 className="text-4xl md:text-5xl font-light tracking-tight">
-        Shop by Category
-      </h2>
-    </motion.div>
 
-    <div className="overflow-hidden" ref={emblaRef}>
-      <div className="flex gap-6">
-        {categories.map((cat, i) => (
-          <motion.a
-            key={cat.name}
-            href={cat.href}
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.3 }} // fixed timing from 3s to 0.3s per item
-            className="flex-shrink-0 w-64 group cursor-pointer"
-          >
-            <div className="relative overflow-hidden h-[320px] mb-4 rounded-2xl shadow-md">
-              <img
-                src={cat.image}
-                alt={cat.name}
-                className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition" />
-              <div className="absolute bottom-6 left-6 text-white">
-                <p className="text-xl font-medium tracking-wider">{cat.name}</p>
-              </div>
-            </div>
-          </motion.a>
-        ))}
-      </div>
-    </div>
-  </div>
-</section>
+
+
 
 
       {/* NEW ARRIVALS GRID */}
     {/* NEW ARRIVALS GRID */}
-<section className="py-24 px-6 md:px-12 lg:px-20 bg-stone-50">
+    <section className="py-24 px-6 md:px-12 lg:px-20 bg-stone-50">
   <div className="max-w-7xl mx-auto">
+
+    {/* SECTION TITLE */}
     <motion.div
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       className="text-center mb-16"
     >
-      <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-4">New Arrivals</h2>
+      <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-4">
+        New Arrivals
+      </h2>
       <p className="text-gray-600 text-lg">Curated for the modern wardrobe</p>
     </motion.div>
 
+    {/* PRODUCT GRID */}
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
       {featuredProducts.map((product, index) => (
         <motion.article
@@ -297,14 +281,16 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
           transition={{ delay: index * 0.1 }}
           className="group"
         >
-          {/* ---- PRODUCT LINK (click image / text → detail page) ---- */}
           <Link to={`/product/${product.id}`} className="block">
+
+            {/* IMAGE */}
             <div className="relative overflow-hidden bg-gray-100 aspect-[3/4] mb-5">
               {product.badge && (
                 <span className="absolute top-4 left-4 bg-black text-white text-xs font-bold px-3 py-1.5 rounded-md z-20 tracking-wider">
                   {product.badge}
                 </span>
               )}
+
               <img
                 src={product.image}
                 alt={product.name}
@@ -312,10 +298,10 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
                 loading="lazy"
               />
 
-              {/* ---- WISHLIST BUTTON ---- */}
+              {/* WISHLIST BUTTON */}
               <button
                 onClick={(e) => {
-                  e.preventDefault();      // stop navigation
+                  e.preventDefault();
                   e.stopPropagation();
                   toggleWishlist(product.id, e);
                 }}
@@ -328,11 +314,11 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
                 )}
               </button>
 
-              {/* ---- QUICK ADD BUTTON (adds to cart, NO navigation) ---- */}
+              {/* QUICK ADD */}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={(e) => {
-                    e.preventDefault();      // stop navigation
+                    e.preventDefault();
                     e.stopPropagation();
                     handleAddToCart(product, e);
                   }}
@@ -343,29 +329,33 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
               </div>
             </div>
 
-            {/* ---- PRODUCT INFO (still clickable) ---- */}
+            {/* INFO */}
             <div className="space-y-1">
               <p className="text-sm text-gray-500 tracking-wider">{product.designer}</p>
               <h3 className="font-medium text-lg line-clamp-1">{product.name}</h3>
               <p className="text-lg font-medium">₦{product.price.toLocaleString()}</p>
             </div>
+
           </Link>
         </motion.article>
       ))}
     </div>
 
+    {/* VIEW ALL BUTTON */}
     <div className="text-center mt-16">
-      <motion.a
-        href="/shop"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="inline-block border border-black px-12 py-4 font-medium tracking-wider hover:bg-black hover:text-white transition"
-      >
-        VIEW ALL NEW ARRIVALS
-      </motion.a>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <Link
+          to="/category?category=New%20Arrivals"
+          className="inline-block border border-black px-12 py-4 font-medium tracking-wider hover:bg-black hover:text-white transition"
+        >
+          VIEW ALL NEW ARRIVALS
+        </Link>
+      </motion.div>
     </div>
+
   </div>
 </section>
+
 
       {/* EDITORIAL LOOKBOOK */}
       <section className="py-24 px-6 md:px-12 bg-white">
@@ -489,7 +479,7 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 1.5 }}
-        className="fixed bottom-8 right-8 flex flex-col gap-3 z-50"
+        className="fixed bottom-16 right-8 flex flex-col gap-3 z-60"
       >
         <Link
           to="/cart"

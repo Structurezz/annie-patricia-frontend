@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Topbar from "../components/TopBar";
@@ -13,12 +13,14 @@ import {
   XMarkIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ShoppingBagIcon 
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 
 import { allProducts, categories as productCategories } from "../components/data/products";
-import { useAppDispatch } from "../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../store/hooks";   // <-- create this file
 import { addToCart } from "../store/cartSlice";
+
 
 // Subcategories
 const subcategories = [
@@ -45,6 +47,27 @@ const Shop: React.FC = () => {
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
   const [mobileFiltersOpen, setMobileFiltersOpen] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const cartItems = useAppSelector(state => state.cart.items);
+  const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
+  const [wishlist, setWishlist] = useState<Set<number>>(() => {
+    const saved = localStorage.getItem("wishlist");
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
+  
+
+  // Always scroll to top whenever filters, sorting, category, or page changes
+React.useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}, [
+  selectedCategory,
+  selectedSubcategory,
+  priceRange,
+  sortBy,
+  viewMode,
+  currentPage,
+  location.search
+]);
+
 
   // Filter & Sort
   const filteredAndSorted = useMemo(() => {
@@ -639,6 +662,46 @@ const Shop: React.FC = () => {
           </>
         )}
       </AnimatePresence>
+
+         {/* FLOATING CART & WISHLIST */}
+         <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 1.5 }}
+        className="fixed bottom-16 right-8 flex flex-col gap-3 z-50"
+      >
+        <Link
+          to="/cart"
+          className="relative p-4 bg-black text-white rounded-full shadow-xl"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <ShoppingBagIcon className="w-6 h-6" />
+          {cartCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium animate-pulse">
+              {cartCount}
+            </span>
+          )}
+        </Link>
+
+        <Link
+          to="/saved"
+          className="relative p-4 bg-white border border-gray-300 rounded-full shadow-xl"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {wishlist.size > 0 ? (
+            <HeartSolid className="w-6 h-6 text-red-500" />
+          ) : (
+            <HeartOutline className="w-6 h-6 text-gray-800" />
+          )}
+          {wishlist.size > 0 && (
+            <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium">
+              {wishlist.size}
+            </span>
+          )}
+        </Link>
+      </motion.div>
 
       <Footer />
     </>

@@ -86,25 +86,27 @@ const TopBar: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       {/* ---------- MOBILE TOPBAR ---------- */}
-      <div className="sm:hidden flex items-center justify-between p-3 bg-black text-white">
+      <div className="sm:hidden flex items-center justify-between p-3 bg-gray-900 text-white">
         <button onClick={toggleMobileMenu} aria-label="Open menu">
           <MenuIcon className="h-6 w-6" />
         </button>
 
-        <Link to="/" className="text-xl font-bold">
-          Annie Patricia
-        </Link>
+        <Link to="/" className="flex items-center h-6 -ml-40">
+  <img
+    src="/annielogo.png"
+    alt="Annie Patricia Logo"
+    className="max-h-20 w-auto object-contain -my-1 brightness-200"
+  />
+</Link>
+
+
+
 
         <div className="flex items-center gap-4">
           <button className="p-1">
             <SearchIcon className="h-6 w-6" />
           </button>
-          <Link to="/account" className="p-1">
-            <UserOutline className="h-6 w-6" />
-          </Link>
-          <Link to="/wishlist" className="p-1">
-            <HeartIcon className="h-6 w-6" />
-          </Link>
+          
           <Link to="/cart" className="relative p-1">
             <ShoppingCartIcon className="h-6 w-6" />
             {cartCount > 0 && (
@@ -303,9 +305,13 @@ const TopBar: React.FC = () => {
       {/* ---------- DESKTOP HEADER ---------- */}
       <div className="hidden sm:block bg-black text-white">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold">
-            Annie Patricia
-          </Link>
+        <Link to="/" className="flex items-center h-6 ">
+  <img
+    src="/annielogo.png"
+    alt="Annie Patricia Logo"
+    className="max-h-20 w-auto object-contain -my-1 brightness-200"
+  />
+</Link>
 
           <div className="flex items-center gap-1">
             <button
@@ -357,21 +363,25 @@ const TopBar: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-gray-100 text-black">
-          <div className="max-w-7xl mx-auto px-6">
-            <nav className="flex items-center gap-6 py-2 text-sm font-medium">
-              {currentSubNav.map((cat) => (
-                <Link
-                  key={cat}
-                  to={`/category?category=${cat}`}
-                  className="hover:text-red-600 transition"
-                >
-                  {cat}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </div>
+        <div className="bg-white text-gray-800 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 py-2 text-sm font-medium">
+    {currentSubNav.map((cat) => (
+      <Link
+        key={cat}
+        to={`/category?category=${cat}`}
+        className="relative whitespace-nowrap text-gray-800 hover:text-red-600 transition-colors"
+      >
+        {cat}
+        <span className="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
+      </Link>
+    ))}
+  </nav>
+</div>
+
+
+</div>
+
       </div>
     </header>
   );
