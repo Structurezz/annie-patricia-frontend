@@ -1638,13 +1638,38 @@ export interface Product {
   ];
   
   // ──────────────────────────────────────
+  // Gender mapping by category
+  // ──────────────────────────────────────
+  const WOMEN_CATS = new Set([
+    "Bubus","Kimono and pant sets","Kimono","Asoeke","Dresses","Long dresses",
+    "Short dresses","Jumpsuits","Skirts","Skirt sets","Two piece","Tops /Blouses",
+    "Hair","Jewelry","Scarfs",
+  ]);
+  const MEN_CATS = new Set(["Kaftan","Agbada","Jackets","Pants"]);
+
+  export type Gender = "WOMEN" | "MEN" | "UNISEX";
+
+  export function productGender(category: string): Gender {
+    if (WOMEN_CATS.has(category)) return "WOMEN";
+    if (MEN_CATS.has(category)) return "MEN";
+    return "UNISEX";
+  }
+
+  // ──────────────────────────────────────
   // Helper exports
   // ──────────────────────────────────────
   export const getProductsByCategory = (cat: string): Product[] =>
     allProducts.filter(p => p.category === cat);
-  
+
+  export const womenProducts = allProducts.filter(p => WOMEN_CATS.has(p.category) || p.category === "Bags" || p.category === "Shoes" || p.category === "Belt");
+
+  export const menProducts = allProducts.filter(p => MEN_CATS.has(p.category) || p.category === "Bags" || p.category === "Shoes" || p.category === "Belt" || p.category === "Scarfs");
+
   export const categories = [...new Set(allProducts.map(p => p.category))].sort();
-  
+
+  export const womenCategories = [...new Set(womenProducts.map(p => p.category))].sort();
+  export const menCategories   = [...new Set(menProducts.map(p => p.category))].sort();
+
   export const designers = [
     "All Designers",
     ...new Set(allProducts.map(p => p.designer))

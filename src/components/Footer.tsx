@@ -53,8 +53,8 @@ const Footer: React.FC = () => {
               to={href}
               className={`flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors ${
                 isActive(href)
-                  ? "text-[#B8860B]"
-                  : "text-gray-400 hover:text-[#111111]"
+                  ? "text-[#C9A84C]"
+                  : "text-gray-400 hover:text-[#0A0908]"
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -67,7 +67,7 @@ const Footer: React.FC = () => {
       </nav>
 
       {/* ── DESKTOP FOOTER ── */}
-      <footer className="hidden md:block bg-[#111111] text-white">
+      <footer className="hidden md:block bg-[#0A0908] text-white">
         {/* Upper footer */}
         <div className="max-w-screen-xl mx-auto px-8 lg:px-16 pt-16 pb-10">
           <div className="grid md:grid-cols-5 gap-10">
@@ -75,8 +75,8 @@ const Footer: React.FC = () => {
             {/* Brand */}
             <div className="md:col-span-2">
               <div className="mb-5">
-                <p className="font-playfair text-xl tracking-[0.2em] text-white mb-1">ANNIE PATRICIA</p>
-                <div className="w-8 h-0.5 bg-[#B8860B] mb-4" />
+                <p className="font-cormorant text-2xl tracking-[0.3em] text-white font-light mb-1">ANNIE PATRICIA</p>
+                <div className="w-8 h-0.5 bg-[#C9A84C] mb-4" />
                 <p className="text-xs text-gray-400 font-inter leading-relaxed tracking-wider max-w-xs">
                   Nigerian luxury, globally crafted. We work with master artisans across Nigeria to
                   bring you garments that honor tradition while speaking to the modern wardrobe.
@@ -88,7 +88,7 @@ const Footer: React.FC = () => {
                   { label: "Instagram", path: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" },
                   { label: "Twitter/X", path: "M22.46 6c-.77.35-1.6.58-2.46.69a4.3 4.3 0 001.88-2.37 8.59 8.59 0 01-2.72 1.04 4.27 4.27 0 00-7.28 3.9A12.12 12.12 0 013 4.79a4.27 4.27 0 001.32 5.7 4.22 4.22 0 01-1.93-.53v.05a4.27 4.27 0 003.43 4.18 4.27 4.27 0 01-1.92.07 4.27 4.27 0 003.98 2.96A8.56 8.56 0 012 19.54a12.07 12.07 0 006.56 1.92c7.87 0 12.18-6.53 12.18-12.18 0-.19-.01-.37-.02-.55A8.7 8.7 0 0022.46 6z" },
                 ].map((s) => (
-                  <a key={s.label} href="#" className="text-gray-500 hover:text-[#B8860B] transition-colors">
+                  <a key={s.label} href="#" className="text-gray-500 hover:text-[#C9A84C] transition-colors">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d={s.path} /></svg>
                   </a>
                 ))}
@@ -142,9 +142,9 @@ const Footer: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email"
-                  className="w-full px-4 py-2.5 bg-white/5 border border-gray-700 text-white placeholder-gray-600 text-xs font-inter focus:outline-none focus:border-[#B8860B] transition-colors"
+                  className="w-full px-4 py-2.5 bg-white/5 border border-gray-700 text-white placeholder-gray-600 text-xs font-inter focus:outline-none focus:border-[#C9A84C] transition-colors"
                 />
-                <button className="w-full py-2.5 bg-[#B8860B] text-white text-xs font-medium tracking-wider hover:bg-[#D4A017] transition-colors font-inter">
+                <button className="w-full py-2.5 bg-[#C9A84C] text-white text-xs font-medium tracking-wider hover:bg-[#D4A017] transition-colors font-inter">
                   SUBSCRIBE
                 </button>
               </div>

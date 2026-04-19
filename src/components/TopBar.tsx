@@ -240,7 +240,7 @@ const TopBar: React.FC = () => {
       {/* ════════════════════════════════════════
           ANNOUNCEMENT BAR
       ════════════════════════════════════════ */}
-      <div className="bg-[#111111] text-white overflow-hidden h-9 flex items-center">
+      <div className="bg-[#0A0908] text-white overflow-hidden h-9 flex items-center">
         <div className="flex-1 text-center relative h-full flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.p
@@ -261,7 +261,7 @@ const TopBar: React.FC = () => {
             <button
               key={i}
               onClick={() => setAnnouncementIdx(i)}
-              className={`rounded-full transition-all duration-300 ${i === announcementIdx ? "w-4 h-1.5 bg-[#B8860B]" : "w-1.5 h-1.5 bg-white/30 hover:bg-white/60"}`}
+              className={`rounded-full transition-all duration-300 ${i === announcementIdx ? "w-4 h-1.5 bg-[#C9A84C]" : "w-1.5 h-1.5 bg-white/30 hover:bg-white/60"}`}
             />
           ))}
         </div>
@@ -287,60 +287,40 @@ const TopBar: React.FC = () => {
                 className="md:hidden flex flex-col gap-[5px] p-1 group"
                 aria-label="Open menu"
               >
-                <span className="block w-6 h-[1.5px] bg-[#111111] transition-all group-hover:w-5" />
-                <span className="block w-4 h-[1.5px] bg-[#111111] transition-all group-hover:w-6" />
-                <span className="block w-6 h-[1.5px] bg-[#111111] transition-all group-hover:w-4" />
+                <span className="block w-6 h-[1.5px] bg-[#0A0908] transition-all group-hover:w-5" />
+                <span className="block w-4 h-[1.5px] bg-[#0A0908] transition-all group-hover:w-6" />
+                <span className="block w-6 h-[1.5px] bg-[#0A0908] transition-all group-hover:w-4" />
               </button>
 
               {/* Desktop nav links */}
-              <nav className="hidden md:flex items-center gap-1">
-                {/* WOMEN */}
-                {(["women", "men", "collections"] as const).map((key) => (
-                  <div
-                    key={key}
-                    className="relative"
-                    onMouseEnter={() => openMenu(key)}
-                    onMouseLeave={closeMenu}
-                  >
-                    <button
-                      className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors flex items-center gap-1 ${
-                        activeMenu === key ? "text-[#111111]" : "text-gray-500 hover:text-[#111111]"
-                      }`}
-                    >
+              <nav className="hidden md:flex items-center gap-0.5">
+                <Link to="/women" className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors ${isActive("/women") ? "text-[#0A0908]" : "text-[#7A7571] hover:text-[#0A0908]"}`}>Women</Link>
+                <Link to="/men"   className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors ${isActive("/men")   ? "text-[#0A0908]" : "text-[#7A7571] hover:text-[#0A0908]"}`}>Men</Link>
+                {(["collections"] as const).map((key) => (
+                  <div key={key} className="relative" onMouseEnter={() => openMenu(key)} onMouseLeave={closeMenu}>
+                    <button className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors flex items-center gap-1 ${activeMenu === key ? "text-[#0A0908]" : "text-[#7A7571] hover:text-[#0A0908]"}`}>
                       {MEGA_MENU[key].label}
                       <Icon.ChevronDown className={`w-3 h-3 transition-transform duration-200 ${activeMenu === key ? "rotate-180" : ""}`} />
                     </button>
-                    {/* Active underline */}
-                    {activeMenu === key && (
-                      <motion.div layoutId="nav-underline" className="absolute bottom-0 inset-x-3 h-[2px] bg-[#111111]" />
-                    )}
+                    {activeMenu === key && <motion.div layoutId="nav-underline" className="absolute bottom-0 inset-x-3 h-[1.5px] bg-[#C9A84C]" />}
                   </div>
                 ))}
-                <Link
-                  to="/about"
-                  className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors ${isActive("/about") ? "text-[#111111]" : "text-gray-500 hover:text-[#111111]"}`}
-                >
-                  About
-                </Link>
-                <Link
-                  to="/contact"
-                  className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors ${isActive("/contact") ? "text-[#111111]" : "text-gray-500 hover:text-[#111111]"}`}
-                >
-                  Contact
-                </Link>
+                <Link to="/new-arrivals" className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors ${isActive("/new-arrivals") ? "text-[#C9A84C]" : "text-[#7A7571] hover:text-[#C9A84C]"}`}>New In</Link>
+                <Link to="/bestsellers"  className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors ${isActive("/bestsellers")  ? "text-[#0A0908]" : "text-[#7A7571] hover:text-[#0A0908]"}`}>Bestsellers</Link>
+                <Link to="/about"        className={`px-3 py-2 text-[13px] font-inter font-medium tracking-wide transition-colors ${isActive("/about")        ? "text-[#0A0908]" : "text-[#7A7571] hover:text-[#0A0908]"}`}>About</Link>
               </nav>
             </div>
 
             {/* CENTER: Logo */}
             <Link to="/" className="absolute left-1/2 -translate-x-1/2 text-center group">
               <div className="flex flex-col items-center">
-                <span className="font-playfair text-lg md:text-xl font-semibold tracking-[0.22em] text-[#111111] leading-none group-hover:tracking-[0.28em] transition-all duration-300">
+                <span className="font-cormorant text-xl md:text-2xl font-light tracking-[0.3em] text-[#0A0908] leading-none group-hover:tracking-[0.38em] transition-all duration-500">
                   ANNIE PATRICIA
                 </span>
                 <div className="flex items-center gap-2 mt-1">
-                  <div className="h-px w-6 bg-[#B8860B]" />
-                  <span className="text-[8px] font-inter tracking-[0.4em] text-[#B8860B] uppercase">Lagos Luxury</span>
-                  <div className="h-px w-6 bg-[#B8860B]" />
+                  <div className="h-px w-5 bg-[#C9A84C]" />
+                  <span className="text-[8px] font-inter tracking-[0.45em] text-[#C9A84C] uppercase">Lagos</span>
+                  <div className="h-px w-5 bg-[#C9A84C]" />
                 </div>
               </div>
             </Link>
@@ -350,11 +330,11 @@ const TopBar: React.FC = () => {
               {/* Search */}
               <button
                 onClick={() => setSearchOpen(true)}
-                className="group flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-[#111111] transition-colors"
+                className="group flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-[#0A0908] transition-colors"
                 aria-label="Search"
               >
                 <Icon.Search className="w-[18px] h-[18px]" />
-                <span className="hidden lg:block text-xs font-inter text-gray-400 group-hover:text-[#111111] transition-colors">Search</span>
+                <span className="hidden lg:block text-xs font-inter text-gray-400 group-hover:text-[#0A0908] transition-colors">Search</span>
               </button>
 
               {/* Account */}
@@ -363,9 +343,9 @@ const TopBar: React.FC = () => {
                 onMouseEnter={openAccount}
                 onMouseLeave={closeAccount}
               >
-                <button className="flex items-center gap-1.5 px-3 py-2 text-gray-500 hover:text-[#111111] transition-colors">
+                <button className="flex items-center gap-1.5 px-3 py-2 text-gray-500 hover:text-[#0A0908] transition-colors">
                   <Icon.User className="w-[18px] h-[18px]" />
-                  <span className="hidden lg:block text-xs font-inter text-gray-400 hover:text-[#111111] transition-colors">Account</span>
+                  <span className="hidden lg:block text-xs font-inter text-gray-400 hover:text-[#0A0908] transition-colors">Account</span>
                 </button>
                 <AnimatePresence>
                   {accountOpen && (
@@ -382,10 +362,10 @@ const TopBar: React.FC = () => {
                       <div className="px-5 pt-5 pb-4 border-b border-gray-100 bg-[#FAFAF8]">
                         <p className="text-xs text-gray-400 font-inter tracking-wider mb-2">Welcome back</p>
                         <div className="flex gap-2">
-                          <Link to="/login" className="flex-1 text-center text-xs font-medium py-2 bg-[#111111] text-white hover:bg-[#B8860B] transition-colors">
+                          <Link to="/login" className="flex-1 text-center text-xs font-medium py-2 bg-[#0A0908] text-white hover:bg-[#C9A84C] transition-colors">
                             Sign In
                           </Link>
-                          <Link to="/register" className="flex-1 text-center text-xs font-medium py-2 border border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white transition-colors">
+                          <Link to="/register" className="flex-1 text-center text-xs font-medium py-2 border border-[#0A0908] text-[#0A0908] hover:bg-[#0A0908] hover:text-white transition-colors">
                             Register
                           </Link>
                         </div>
@@ -401,7 +381,7 @@ const TopBar: React.FC = () => {
                           <Link
                             key={label}
                             to={href}
-                            className="flex items-center gap-3 px-5 py-3 text-sm font-inter text-gray-600 hover:text-[#111111] hover:bg-gray-50 transition-colors"
+                            className="flex items-center gap-3 px-5 py-3 text-sm font-inter text-gray-600 hover:text-[#0A0908] hover:bg-gray-50 transition-colors"
                           >
                             <Ic className="w-4 h-4 text-gray-400" />
                             {label}
@@ -414,14 +394,14 @@ const TopBar: React.FC = () => {
               </div>
 
               {/* Wishlist */}
-              <Link to="/saved" className="px-3 py-2 text-gray-500 hover:text-[#111111] transition-colors" aria-label="Wishlist">
+              <Link to="/saved" className="px-3 py-2 text-gray-500 hover:text-[#0A0908] transition-colors" aria-label="Wishlist">
                 <Icon.Heart className="w-[18px] h-[18px]" />
               </Link>
 
               {/* Cart trigger */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="relative flex items-center gap-2 px-3 py-2 ml-1 bg-[#111111] text-white hover:bg-[#B8860B] transition-colors duration-200 group"
+                className="relative flex items-center gap-2 px-3 py-2 ml-1 bg-[#0A0908] text-white hover:bg-[#C9A84C] transition-colors duration-200 group"
                 aria-label="Cart"
               >
                 <Icon.Bag className="w-[18px] h-[18px]" />
@@ -429,7 +409,7 @@ const TopBar: React.FC = () => {
                   {cartCount > 0 ? `Bag (${cartCount})` : "Bag"}
                 </span>
                 {cartCount > 0 && (
-                  <span className="lg:hidden absolute -top-1.5 -right-1.5 bg-[#B8860B] text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  <span className="lg:hidden absolute -top-1.5 -right-1.5 bg-[#C9A84C] text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -443,8 +423,8 @@ const TopBar: React.FC = () => {
           <div className="max-w-screen-2xl mx-auto px-5 lg:px-10 xl:px-16">
             <nav className="flex items-center gap-0 overflow-x-auto scrollbar-hide">
               <Link
-                to="/category"
-                className="flex-shrink-0 px-4 py-2.5 text-[11px] font-semibold text-[#111111] tracking-[0.15em] hover:text-[#B8860B] transition-colors border-b-2 border-[#111111] hover:border-[#B8860B]"
+                to="/new-arrivals"
+                className="flex-shrink-0 px-4 py-2.5 text-[11px] font-semibold text-[#C9A84C] tracking-[0.15em] hover:text-[#0A0908] transition-colors border-b-2 border-[#C9A84C] hover:border-[#0A0908]"
               >
                 NEW IN
               </Link>
@@ -452,7 +432,7 @@ const TopBar: React.FC = () => {
                 <Link
                   key={cat}
                   to={`/category?category=${cat}`}
-                  className="flex-shrink-0 px-4 py-2.5 text-[11px] font-medium text-gray-500 tracking-[0.12em] hover:text-[#111111] hover:border-b-2 hover:border-[#111111] transition-all border-b-2 border-transparent"
+                  className="flex-shrink-0 px-4 py-2.5 text-[11px] font-medium text-gray-500 tracking-[0.12em] hover:text-[#0A0908] hover:border-b-2 hover:border-[#0A0908] transition-all border-b-2 border-transparent"
                 >
                   {cat.toUpperCase()}
                 </Link>
@@ -486,7 +466,7 @@ const TopBar: React.FC = () => {
                   <div className="flex gap-10 flex-1">
                     {MEGA_MENU[activeMenu as keyof typeof MEGA_MENU].sections.map((section) => (
                       <div key={section.heading} className="min-w-[140px]">
-                        <p className="text-[10px] font-semibold tracking-[0.25em] text-[#B8860B] uppercase mb-4 font-inter">
+                        <p className="text-[10px] font-semibold tracking-[0.25em] text-[#C9A84C] uppercase mb-4 font-inter">
                           {section.heading}
                         </p>
                         <ul className="space-y-2.5">
@@ -494,7 +474,7 @@ const TopBar: React.FC = () => {
                             <li key={link}>
                               <Link
                                 to={`/category?category=${link}`}
-                                className="text-[13px] font-inter text-gray-600 hover:text-[#111111] hover:translate-x-0.5 transition-all inline-block"
+                                className="text-[13px] font-inter text-gray-600 hover:text-[#0A0908] hover:translate-x-0.5 transition-all inline-block"
                               >
                                 {link}
                               </Link>
@@ -535,15 +515,15 @@ const TopBar: React.FC = () => {
 
                   {/* Quick links */}
                   <div className="w-44 shrink-0 space-y-2">
-                    <p className="text-[10px] font-semibold tracking-[0.25em] text-[#B8860B] uppercase mb-4 font-inter">Highlights</p>
+                    <p className="text-[10px] font-semibold tracking-[0.25em] text-[#C9A84C] uppercase mb-4 font-inter">Highlights</p>
                     {["New Arrivals", "Bestsellers", "Sale", "Gift Cards"].map((item) => (
                       <Link
                         key={item}
                         to={`/category?highlight=${encodeURIComponent(item)}`}
-                        className="flex items-center justify-between group px-3 py-2.5 border border-gray-100 hover:border-[#111111] transition-colors"
+                        className="flex items-center justify-between group px-3 py-2.5 border border-gray-100 hover:border-[#0A0908] transition-colors"
                       >
-                        <span className="text-[12px] font-inter text-gray-600 group-hover:text-[#111111] transition-colors">{item}</span>
-                        <Icon.ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#111111] group-hover:translate-x-0.5 transition-all" />
+                        <span className="text-[12px] font-inter text-gray-600 group-hover:text-[#0A0908] transition-colors">{item}</span>
+                        <Icon.ChevronRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#0A0908] group-hover:translate-x-0.5 transition-all" />
                       </Link>
                     ))}
                   </div>
@@ -572,7 +552,7 @@ const TopBar: React.FC = () => {
             <div className="relative z-10 max-w-2xl mx-auto px-6 pt-24 md:pt-28">
               {/* Search input */}
               <form onSubmit={handleSearch}>
-                <div className="flex items-center gap-4 border-b-2 border-[#111111] pb-4 mb-2">
+                <div className="flex items-center gap-4 border-b-2 border-[#0A0908] pb-4 mb-2">
                   <Icon.Search className="w-5 h-5 text-gray-400 shrink-0" />
                   <input
                     ref={searchRef}
@@ -580,14 +560,14 @@ const TopBar: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="What are you looking for?"
-                    className="flex-1 text-xl font-inter text-[#111111] placeholder-gray-200 outline-none bg-transparent"
+                    className="flex-1 text-xl font-inter text-[#0A0908] placeholder-gray-200 outline-none bg-transparent"
                   />
                   {searchQuery && (
-                    <button type="button" onClick={() => setSearchQuery("")} className="text-gray-300 hover:text-[#111111] transition-colors">
+                    <button type="button" onClick={() => setSearchQuery("")} className="text-gray-300 hover:text-[#0A0908] transition-colors">
                       <Icon.X className="w-5 h-5" />
                     </button>
                   )}
-                  <button type="button" onClick={() => { setSearchOpen(false); setSearchQuery(""); }} className="text-gray-400 hover:text-[#111111] transition-colors pl-3 border-l border-gray-200">
+                  <button type="button" onClick={() => { setSearchOpen(false); setSearchQuery(""); }} className="text-gray-400 hover:text-[#0A0908] transition-colors pl-3 border-l border-gray-200">
                     <Icon.X className="w-5 h-5" />
                   </button>
                 </div>
@@ -613,10 +593,10 @@ const TopBar: React.FC = () => {
                           <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-inter font-medium text-[#111111] truncate">{p.name}</p>
+                          <p className="text-sm font-inter font-medium text-[#0A0908] truncate">{p.name}</p>
                           <p className="text-xs text-gray-400 font-inter">{p.category}</p>
                         </div>
-                        <p className="text-sm font-semibold text-[#111111] shrink-0">₦{p.price.toLocaleString()}</p>
+                        <p className="text-sm font-semibold text-[#0A0908] shrink-0">₦{p.price.toLocaleString()}</p>
                       </Link>
                     ))}
                   </motion.div>
@@ -633,7 +613,7 @@ const TopBar: React.FC = () => {
                         <button
                           key={term}
                           onClick={() => { setSearchQuery(term); }}
-                          className="px-3.5 py-2 text-xs font-inter text-gray-700 border border-gray-200 hover:border-[#111111] hover:text-[#111111] transition-all"
+                          className="px-3.5 py-2 text-xs font-inter text-gray-700 border border-gray-200 hover:border-[#0A0908] hover:text-[#0A0908] transition-all"
                         >
                           {term}
                         </button>
@@ -648,10 +628,10 @@ const TopBar: React.FC = () => {
                           key={cat}
                           to={`/category?category=${cat}`}
                           onClick={() => setSearchOpen(false)}
-                          className="flex items-center justify-between py-2 text-sm font-inter text-gray-600 hover:text-[#111111] transition-colors group"
+                          className="flex items-center justify-between py-2 text-sm font-inter text-gray-600 hover:text-[#0A0908] transition-colors group"
                         >
                           <span>{cat}</span>
-                          <Icon.ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#111111] group-hover:translate-x-0.5 transition-all" />
+                          <Icon.ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#0A0908] group-hover:translate-x-0.5 transition-all" />
                         </Link>
                       ))}
                     </div>
@@ -686,10 +666,10 @@ const TopBar: React.FC = () => {
               {/* Cart header */}
               <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                 <div>
-                  <h2 className="font-playfair text-xl font-semibold text-[#111111]">Your Bag</h2>
+                  <h2 className="font-playfair text-xl font-semibold text-[#0A0908]">Your Bag</h2>
                   <p className="text-xs text-gray-400 font-inter mt-0.5">{cartCount} item{cartCount !== 1 ? "s" : ""}</p>
                 </div>
-                <button onClick={() => setCartOpen(false)} className="p-2 text-gray-400 hover:text-[#111111] hover:bg-gray-50 transition-colors">
+                <button onClick={() => setCartOpen(false)} className="p-2 text-gray-400 hover:text-[#0A0908] hover:bg-gray-50 transition-colors">
                   <Icon.X className="w-5 h-5" />
                 </button>
               </div>
@@ -702,7 +682,7 @@ const TopBar: React.FC = () => {
                   </p>
                   <div className="h-1 bg-amber-100 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full bg-[#B8860B] rounded-full"
+                      className="h-full bg-[#C9A84C] rounded-full"
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(100, (cartTotal / 50000) * 100)}%` }}
                       transition={{ duration: 0.5 }}
@@ -727,7 +707,7 @@ const TopBar: React.FC = () => {
                     <p className="text-sm text-gray-300 font-inter mb-6">Add something beautiful</p>
                     <button
                       onClick={() => { setCartOpen(false); navigate("/category"); }}
-                      className="text-sm font-medium text-[#111111] border border-[#111111] px-6 py-2.5 hover:bg-[#111111] hover:text-white transition-colors"
+                      className="text-sm font-medium text-[#0A0908] border border-[#0A0908] px-6 py-2.5 hover:bg-[#0A0908] hover:text-white transition-colors"
                     >
                       Start Shopping
                     </button>
@@ -752,10 +732,10 @@ const TopBar: React.FC = () => {
                           <div className="flex-1 min-w-0">
                             <p className="text-[10px] text-gray-400 uppercase tracking-wider font-inter">{item.designer}</p>
                             <Link to={`/product/${item.id}`} onClick={() => setCartOpen(false)}>
-                              <p className="text-sm font-inter font-medium text-[#111111] line-clamp-2 leading-snug mt-0.5 hover:text-[#B8860B] transition-colors">{item.name}</p>
+                              <p className="text-sm font-inter font-medium text-[#0A0908] line-clamp-2 leading-snug mt-0.5 hover:text-[#C9A84C] transition-colors">{item.name}</p>
                             </Link>
                             <div className="flex items-center justify-between mt-2">
-                              <p className="text-sm font-semibold text-[#111111]">₦{(item.price * item.quantity).toLocaleString()}</p>
+                              <p className="text-sm font-semibold text-[#0A0908]">₦{(item.price * item.quantity).toLocaleString()}</p>
                               <div className="flex items-center gap-1">
                                 <span className="text-xs text-gray-400 font-inter">Qty: {item.quantity}</span>
                                 <button
@@ -780,20 +760,20 @@ const TopBar: React.FC = () => {
                 <div className="border-t border-gray-100 px-6 py-5 space-y-3 bg-[#FAFAF8]">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-inter text-gray-500">Subtotal</span>
-                    <span className="text-base font-semibold font-inter text-[#111111]">₦{cartTotal.toLocaleString()}</span>
+                    <span className="text-base font-semibold font-inter text-[#0A0908]">₦{cartTotal.toLocaleString()}</span>
                   </div>
                   <p className="text-[11px] text-gray-400 font-inter">Shipping calculated at checkout</p>
                   <Link
                     to="/cart"
                     onClick={() => setCartOpen(false)}
-                    className="block w-full text-center py-3.5 bg-[#111111] text-white text-sm font-medium tracking-wide hover:bg-[#B8860B] transition-colors"
+                    className="block w-full text-center py-3.5 bg-[#0A0908] text-white text-sm font-medium tracking-wide hover:bg-[#C9A84C] transition-colors"
                   >
                     VIEW BAG & CHECKOUT
                   </Link>
                   <Link
                     to="/checkout"
                     onClick={() => setCartOpen(false)}
-                    className="block w-full text-center py-3 border border-gray-200 text-[#111111] text-sm font-medium hover:border-[#111111] transition-colors"
+                    className="block w-full text-center py-3 border border-gray-200 text-[#0A0908] text-sm font-medium hover:border-[#0A0908] transition-colors"
                   >
                     QUICK CHECKOUT
                   </Link>
@@ -829,7 +809,7 @@ const TopBar: React.FC = () => {
                 {mobileSection ? (
                   <button
                     onClick={() => setMobileSection(null)}
-                    className="flex items-center gap-2 text-sm font-inter text-gray-600 hover:text-[#111111] transition-colors"
+                    className="flex items-center gap-2 text-sm font-inter text-gray-600 hover:text-[#0A0908] transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
@@ -838,11 +818,11 @@ const TopBar: React.FC = () => {
                   </button>
                 ) : (
                   <div className="flex flex-col">
-                    <span className="font-playfair text-base tracking-[0.15em] font-semibold text-[#111111]">ANNIE PATRICIA</span>
-                    <span className="text-[9px] tracking-[0.35em] text-[#B8860B] font-inter uppercase">Lagos Luxury</span>
+                    <span className="font-playfair text-base tracking-[0.15em] font-semibold text-[#0A0908]">ANNIE PATRICIA</span>
+                    <span className="text-[9px] tracking-[0.35em] text-[#C9A84C] font-inter uppercase">Lagos Luxury</span>
                   </div>
                 )}
-                <button onClick={() => { setMobileOpen(false); setMobileSection(null); }} className="p-2 text-gray-400 hover:text-[#111111] transition-colors">
+                <button onClick={() => { setMobileOpen(false); setMobileSection(null); }} className="p-2 text-gray-400 hover:text-[#0A0908] transition-colors">
                   <Icon.X className="w-5 h-5" />
                 </button>
               </div>
@@ -863,14 +843,14 @@ const TopBar: React.FC = () => {
                         <Link
                           to="/category?gender=WOMEN"
                           onClick={() => setMobileOpen(false)}
-                          className="text-center py-2.5 text-xs font-semibold tracking-widest bg-[#111111] text-white"
+                          className="text-center py-2.5 text-xs font-semibold tracking-widest bg-[#0A0908] text-white"
                         >
                           WOMEN
                         </Link>
                         <Link
                           to="/category?gender=MEN"
                           onClick={() => setMobileOpen(false)}
-                          className="text-center py-2.5 text-xs font-semibold tracking-widest border border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-white transition-colors"
+                          className="text-center py-2.5 text-xs font-semibold tracking-widest border border-[#0A0908] text-[#0A0908] hover:bg-[#0A0908] hover:text-white transition-colors"
                         >
                           MEN
                         </Link>
@@ -879,7 +859,7 @@ const TopBar: React.FC = () => {
 
                     {/* Category images grid */}
                     <div className="px-5 py-4 border-b border-gray-50">
-                      <p className="text-[10px] tracking-[0.25em] text-[#B8860B] uppercase font-inter mb-3">Shop By Category</p>
+                      <p className="text-[10px] tracking-[0.25em] text-[#C9A84C] uppercase font-inter mb-3">Shop By Category</p>
                       <div className="grid grid-cols-2 gap-2">
                         {[
                           { label: "Dresses", img: "https://images.unsplash.com/photo-1515886657613-9f3519b396dd?w=300&q=70", href: "/category?category=Dresses" },
@@ -907,17 +887,17 @@ const TopBar: React.FC = () => {
                         <button
                           key={key}
                           onClick={() => setMobileSection(key)}
-                          className="w-full flex items-center justify-between py-3.5 border-b border-gray-50 text-sm font-medium text-[#111111] hover:text-[#B8860B] transition-colors"
+                          className="w-full flex items-center justify-between py-3.5 border-b border-gray-50 text-sm font-medium text-[#0A0908] hover:text-[#C9A84C] transition-colors"
                         >
                           <span className="font-inter">{MEGA_MENU[key].label}</span>
                           <Icon.ChevronRight className="w-4 h-4 text-gray-300" />
                         </button>
                       ))}
-                      <Link to="/about" onClick={() => setMobileOpen(false)} className="flex items-center justify-between py-3.5 border-b border-gray-50 text-sm font-medium text-[#111111] hover:text-[#B8860B] transition-colors">
+                      <Link to="/about" onClick={() => setMobileOpen(false)} className="flex items-center justify-between py-3.5 border-b border-gray-50 text-sm font-medium text-[#0A0908] hover:text-[#C9A84C] transition-colors">
                         <span className="font-inter">About</span>
                         <Icon.ChevronRight className="w-4 h-4 text-gray-300" />
                       </Link>
-                      <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex items-center justify-between py-3.5 text-sm font-medium text-[#111111] hover:text-[#B8860B] transition-colors">
+                      <Link to="/contact" onClick={() => setMobileOpen(false)} className="flex items-center justify-between py-3.5 text-sm font-medium text-[#0A0908] hover:text-[#C9A84C] transition-colors">
                         <span className="font-inter">Contact</span>
                         <Icon.ChevronRight className="w-4 h-4 text-gray-300" />
                       </Link>
@@ -935,7 +915,7 @@ const TopBar: React.FC = () => {
                           key={label}
                           to={href}
                           onClick={() => setMobileOpen(false)}
-                          className="flex items-center gap-3 py-2.5 text-sm font-inter text-gray-600 hover:text-[#111111] transition-colors"
+                          className="flex items-center gap-3 py-2.5 text-sm font-inter text-gray-600 hover:text-[#0A0908] transition-colors"
                         >
                           <Ic className="w-4 h-4 text-gray-400" />
                           {label}
@@ -952,7 +932,7 @@ const TopBar: React.FC = () => {
                     transition={{ type: "tween", duration: 0.22 }}
                     className="flex-1 overflow-y-auto px-5 py-4"
                   >
-                    <p className="text-[10px] tracking-[0.25em] text-[#B8860B] uppercase font-inter mb-4">
+                    <p className="text-[10px] tracking-[0.25em] text-[#C9A84C] uppercase font-inter mb-4">
                       {MEGA_MENU[mobileSection as keyof typeof MEGA_MENU].label}
                     </p>
                     {MEGA_MENU[mobileSection as keyof typeof MEGA_MENU].sections.map((section) => (
@@ -963,7 +943,7 @@ const TopBar: React.FC = () => {
                             key={link}
                             to={`/category?category=${link}`}
                             onClick={() => { setMobileOpen(false); setMobileSection(null); }}
-                            className="block py-2.5 text-sm font-inter text-gray-700 hover:text-[#B8860B] border-b border-gray-50 transition-colors"
+                            className="block py-2.5 text-sm font-inter text-gray-700 hover:text-[#C9A84C] border-b border-gray-50 transition-colors"
                           >
                             {link}
                           </Link>
@@ -979,7 +959,7 @@ const TopBar: React.FC = () => {
                 <Link
                   to="/category"
                   onClick={() => setMobileOpen(false)}
-                  className="block text-center py-3 bg-[#111111] text-white text-sm font-medium tracking-widest hover:bg-[#B8860B] transition-colors font-inter"
+                  className="block text-center py-3 bg-[#0A0908] text-white text-sm font-medium tracking-widest hover:bg-[#C9A84C] transition-colors font-inter"
                 >
                   SHOP ALL
                 </Link>
