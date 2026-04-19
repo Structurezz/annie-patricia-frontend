@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { fetchProfile, setUser } from "./store/authSlice";
+import { getToken } from "./services/api";
 
 // Homepages
 import Home        from "./pages/homepage";
@@ -28,7 +31,20 @@ import OrderDetail   from "./components/OrderDetail";
 import Saved         from "./pages/saved";
 import Shipping      from "./pages/shipping";
 
+// Auth
+import Login    from "./pages/login";
+import Register from "./pages/register";
+
 function App() {
+  const dispatch    = useAppDispatch();
+  const initialized = useAppSelector(s => s.auth.initialized);
+
+  /* Restore session on mount if token exists */
+  useEffect(() => {
+    if (getToken()) dispatch(fetchProfile());
+    else dispatch(setUser(null));
+  }, [dispatch]);
+
   return (
     <Routes>
       {/* ── Landing ── */}
@@ -42,7 +58,7 @@ function App() {
       <Route path="/men"         element={<MenHome />} />
       <Route path="/men/shop"    element={<MenShop />} />
 
-      {/* ── General shop (legacy /category routes) ── */}
+      {/* ── General shop ── */}
       <Route path="/category"              element={<Shop />} />
       <Route path="/category/:categoryName" element={<Shop />} />
 
@@ -64,6 +80,11 @@ function App() {
       <Route path="/order/:id"  element={<OrderDetail />} />
       <Route path="/saved"      element={<Saved />} />
       <Route path="/shipping"   element={<Shipping />} />
+
+      {/* ── Auth ── */}
+      <Route path="/login"    element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/account"  element={<Login />} />
     </Routes>
   );
 }

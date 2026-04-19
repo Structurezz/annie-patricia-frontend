@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { newsletter as newsletterApi } from "../services/api";
 
 const HomeIcon = (p: React.SVGProps<SVGSVGElement>) => (
   <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -30,6 +31,23 @@ const UserIcon = (p: React.SVGProps<SVGSVGElement>) => (
 const Footer: React.FC = () => {
   const location = useLocation();
   const [email, setEmail] = useState("");
+  const [subState, setSubState] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [subMsg, setSubMsg] = useState("");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubState("loading");
+    try {
+      await newsletterApi.subscribe(email.trim());
+      setSubState("success");
+      setSubMsg("You're subscribed!");
+      setEmail("");
+    } catch (err: any) {
+      setSubState("error");
+      setSubMsg(err.message ?? "Something went wrong.");
+    }
+  };
 
   const isActive = (href: string) =>
     href === "/" ? location.pathname === "/" : location.pathname.startsWith(href);
@@ -136,18 +154,30 @@ const Footer: React.FC = () => {
               <p className="text-xs text-gray-500 font-inter mb-4 leading-relaxed">
                 Get early access to drops and exclusive offers.
               </p>
-              <div className="flex flex-col gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Your email"
-                  className="w-full px-4 py-2.5 bg-white/5 border border-gray-700 text-white placeholder-gray-600 text-xs font-inter focus:outline-none focus:border-[#C9A84C] transition-colors"
-                />
-                <button className="w-full py-2.5 bg-[#C9A84C] text-white text-xs font-medium tracking-wider hover:bg-[#D4A017] transition-colors font-inter">
-                  SUBSCRIBE
-                </button>
-              </div>
+              {subState === "success" ? (
+                <p className="text-xs font-inter text-[#C9A84C]">{subMsg}</p>
+              ) : (
+                <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Your email"
+                    required
+                    className="w-full px-4 py-2.5 bg-white/5 border border-gray-700 text-white placeholder-gray-600 text-xs font-inter focus:outline-none focus:border-[#C9A84C] transition-colors"
+                  />
+                  {subState === "error" && (
+                    <p className="text-[10px] font-inter text-red-400">{subMsg}</p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={subState === "loading"}
+                    className="w-full py-2.5 bg-[#C9A84C] text-white text-xs font-medium tracking-wider hover:bg-[#D4A017] transition-colors font-inter disabled:opacity-60"
+                  >
+                    {subState === "loading" ? "SUBSCRIBING…" : "SUBSCRIBE"}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>
