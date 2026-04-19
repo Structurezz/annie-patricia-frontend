@@ -1,111 +1,109 @@
-// src/components/Footer.tsx
-import {
-  HomeIcon,
-  ShoppingBagIcon,
-  UserIcon,
-  HeartIcon,
-  ArchiveBoxIcon,
-} from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-const Footer = () => {
+const HomeIcon = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+  </svg>
+);
+const ShopIcon = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+  </svg>
+);
+const HeartIcon = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+);
+const OrderIcon = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+  </svg>
+);
+const UserIcon = (p: React.SVGProps<SVGSVGElement>) => (
+  <svg {...p} fill="none" viewBox="0 0 24 24" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+  </svg>
+);
+
+const Footer: React.FC = () => {
+  const location = useLocation();
+  const [email, setEmail] = useState("");
+
+  const isActive = (href: string) =>
+    href === "/" ? location.pathname === "/" : location.pathname.startsWith(href);
+
+  const navTabs = [
+    { href: "/", label: "Home", Icon: HomeIcon },
+    { href: "/category", label: "Shop", Icon: ShopIcon },
+    { href: "/saved", label: "Saved", Icon: HeartIcon },
+    { href: "/orders", label: "Orders", Icon: OrderIcon },
+    { href: "/account", label: "Account", Icon: UserIcon },
+  ];
+
   return (
     <>
-      {/* ── MOBILE BOTTOM NAV ── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-brand border-t border-gold/20 z-50 shadow-2xl">
-        <div className="flex justify-around py-3">
-          {/* HOME */}
-          <Link
-            to="/"
-            className="flex flex-col items-center gap-1 text-xs font-inter font-medium text-cream/50 hover:text-gold transition-colors tracking-wider"
-          >
-            <HomeIcon className="w-5 h-5" />
-            <span className="text-[10px]">HOME</span>
-          </Link>
-
-          {/* SHOP */}
-          <Link
-            to="/category"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex flex-col items-center gap-1 text-xs font-inter font-medium text-cream/50 hover:text-gold transition-colors tracking-wider"
-          >
-            <ShoppingBagIcon className="w-5 h-5" />
-            <span className="text-[10px]">SHOP</span>
-          </Link>
-
-          {/* SAVED */}
-          <Link
-            to="/saved"
-            className="flex flex-col items-center gap-1 text-xs font-inter font-medium text-cream/50 hover:text-gold transition-colors tracking-wider"
-          >
-            <HeartIcon className="w-5 h-5" />
-            <span className="text-[10px]">SAVED</span>
-          </Link>
-
-          {/* ORDERS */}
-          <Link
-            to="/orders"
-            className="flex flex-col items-center gap-1 text-xs font-inter font-medium text-cream/50 hover:text-gold transition-colors tracking-wider"
-          >
-            <ArchiveBoxIcon className="w-5 h-5" />
-            <span className="text-[10px]">ORDERS</span>
-          </Link>
-
-          {/* ACCOUNT */}
-          <Link
-            to="/account"
-            className="flex flex-col items-center gap-1 text-xs font-inter font-medium text-cream/50 hover:text-gold transition-colors tracking-wider"
-          >
-            <UserIcon className="w-5 h-5" />
-            <span className="text-[10px]">ACCOUNT</span>
-          </Link>
+      {/* ── MOBILE BOTTOM TAB NAV ── */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-50 safe-bottom">
+        <div className="flex items-center justify-around px-2 py-1.5">
+          {navTabs.map(({ href, label, Icon }) => (
+            <Link
+              key={label}
+              to={href}
+              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors ${
+                isActive(href)
+                  ? "text-[#B8860B]"
+                  : "text-gray-400 hover:text-[#111111]"
+              }`}
+            >
+              <Icon className="w-5 h-5" />
+              <span className={`text-[9px] tracking-wider font-inter uppercase ${isActive(href) ? "font-semibold" : ""}`}>
+                {label}
+              </span>
+            </Link>
+          ))}
         </div>
       </nav>
 
       {/* ── DESKTOP FOOTER ── */}
-      <footer className="hidden md:block bg-brand border-t border-gold/15">
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+      <footer className="hidden md:block bg-[#111111] text-white">
+        {/* Upper footer */}
+        <div className="max-w-screen-xl mx-auto px-8 lg:px-16 pt-16 pb-10">
+          <div className="grid md:grid-cols-5 gap-10">
 
-            {/* Brand column */}
-            <div className="col-span-2 md:col-span-1">
-              <div className="mb-6">
-                <span className="font-playfair text-2xl tracking-[0.25em] text-cream">ANNIE PATRICIA</span>
-                <div className="w-8 h-px bg-gold mt-3 mb-4" />
-                <p className="font-inter text-xs text-cream/50 leading-relaxed tracking-wider">
-                  Nigerian luxury. Global craft.<br />Timeless design.
+            {/* Brand */}
+            <div className="md:col-span-2">
+              <div className="mb-5">
+                <p className="font-playfair text-xl tracking-[0.2em] text-white mb-1">ANNIE PATRICIA</p>
+                <div className="w-8 h-0.5 bg-[#B8860B] mb-4" />
+                <p className="text-xs text-gray-400 font-inter leading-relaxed tracking-wider max-w-xs">
+                  Nigerian luxury, globally crafted. We work with master artisans across Nigeria to
+                  bring you garments that honor tradition while speaking to the modern wardrobe.
                 </p>
               </div>
-
-              {/* Social icons */}
-              <div className="flex gap-4 mt-6">
-                <a href="#" className="text-cream/40 hover:text-gold transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
-                  </svg>
-                </a>
-                <a href="#" className="text-cream/40 hover:text-gold transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15h-2.5v-3H8v-2c0-1.1.9-2 2-2h2v3h2.5v3H12v6.8c4.56-.93 8-4.96 8-9.8z" />
-                  </svg>
-                </a>
-                <a href="#" className="text-cream/40 hover:text-gold transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04 4.27 4.27 0 0 0-7.28 3.9A12.12 12.12 0 0 1 3 4.79a4.27 4.27 0 0 0 1.32 5.7 4.22 4.22 0 0 1-1.93-.53v.05a4.27 4.27 0 0 0 3.43 4.18 4.27 4.27 0 0 1-1.92.07 4.27 4.27 0 0 0 3.98 2.96A8.56 8.56 0 0 1 2 19.54a12.07 12.07 0 0 0 6.56 1.92c7.87 0 12.18-6.53 12.18-12.18 0-.19-.01-.37-.02-.55A8.7 8.7 0 0 0 22.46 6z" />
-                  </svg>
-                </a>
+              {/* Social */}
+              <div className="flex gap-4">
+                {[
+                  { label: "Instagram", path: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" },
+                  { label: "Twitter/X", path: "M22.46 6c-.77.35-1.6.58-2.46.69a4.3 4.3 0 001.88-2.37 8.59 8.59 0 01-2.72 1.04 4.27 4.27 0 00-7.28 3.9A12.12 12.12 0 013 4.79a4.27 4.27 0 001.32 5.7 4.22 4.22 0 01-1.93-.53v.05a4.27 4.27 0 003.43 4.18 4.27 4.27 0 01-1.92.07 4.27 4.27 0 003.98 2.96A8.56 8.56 0 012 19.54a12.07 12.07 0 006.56 1.92c7.87 0 12.18-6.53 12.18-12.18 0-.19-.01-.37-.02-.55A8.7 8.7 0 0022.46 6z" },
+                ].map((s) => (
+                  <a key={s.label} href="#" className="text-gray-500 hover:text-[#B8860B] transition-colors">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d={s.path} /></svg>
+                  </a>
+                ))}
               </div>
             </div>
 
             {/* Shop */}
             <div>
-              <h4 className="font-inter text-xs tracking-[0.3em] text-gold mb-6 uppercase">Shop</h4>
-              <ul className="space-y-3">
-                {["New Arrivals", "Dresses", "Knitwear", "Accessories", "Bags", "Sale"].map((item) => (
+              <h4 className="text-xs tracking-[0.25em] text-gray-400 uppercase font-inter mb-5">Shop</h4>
+              <ul className="space-y-2.5">
+                {["New Arrivals", "Dresses", "Kente Sets", "Accessories", "Bags", "Sale"].map((item) => (
                   <li key={item}>
-                    <a href="#" className="font-inter text-xs text-cream/50 hover:text-gold transition-colors tracking-wider">
+                    <Link to={`/category?category=${item}`} className="text-xs text-gray-500 hover:text-white transition-colors font-inter">
                       {item}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -113,17 +111,18 @@ const Footer = () => {
 
             {/* Help */}
             <div>
-              <h4 className="font-inter text-xs tracking-[0.3em] text-gold mb-6 uppercase">Help</h4>
-              <ul className="space-y-3">
+              <h4 className="text-xs tracking-[0.25em] text-gray-400 uppercase font-inter mb-5">Help</h4>
+              <ul className="space-y-2.5">
                 {[
-                  { label: "About", href: "/about" },
+                  { label: "About Us", href: "/about" },
                   { label: "Contact", href: "/contact" },
-                  { label: "Orders", href: "/orders" },
-                  { label: "Shipping", href: "/shipping" },
+                  { label: "My Orders", href: "/orders" },
+                  { label: "Shipping Info", href: "/shipping" },
                   { label: "Returns", href: "#" },
+                  { label: "FAQ", href: "#" },
                 ].map((item) => (
                   <li key={item.label}>
-                    <Link to={item.href} className="font-inter text-xs text-cream/50 hover:text-gold transition-colors tracking-wider">
+                    <Link to={item.href} className="text-xs text-gray-500 hover:text-white transition-colors font-inter">
                       {item.label}
                     </Link>
                   </li>
@@ -133,38 +132,49 @@ const Footer = () => {
 
             {/* Newsletter */}
             <div>
-              <h4 className="font-inter text-xs tracking-[0.3em] text-gold mb-6 uppercase">Connect</h4>
-              <p className="font-inter text-xs text-cream/50 mb-5 leading-relaxed tracking-wider">
-                Join our exclusive list for first access to new drops and private sales.
+              <h4 className="text-xs tracking-[0.25em] text-gray-400 uppercase font-inter mb-5">Stay Updated</h4>
+              <p className="text-xs text-gray-500 font-inter mb-4 leading-relaxed">
+                Get early access to drops and exclusive offers.
               </p>
-              <div className="flex border border-gold/30">
+              <div className="flex flex-col gap-2">
                 <input
                   type="email"
-                  placeholder="Email"
-                  className="flex-1 px-4 py-3 bg-transparent text-cream/70 placeholder-cream/25 text-xs font-inter focus:outline-none border-r border-gold/30"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Your email"
+                  className="w-full px-4 py-2.5 bg-white/5 border border-gray-700 text-white placeholder-gray-600 text-xs font-inter focus:outline-none focus:border-[#B8860B] transition-colors"
                 />
-                <button className="px-5 py-3 bg-gold text-brand text-xs font-inter font-medium hover:bg-gold-light transition-colors tracking-wider">
-                  JOIN
+                <button className="w-full py-2.5 bg-[#B8860B] text-white text-xs font-medium tracking-wider hover:bg-[#D4A017] transition-colors font-inter">
+                  SUBSCRIBE
                 </button>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Copyright */}
-          <div className="mt-16 pt-8 border-t border-gold/15 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="font-inter text-xs text-cream/25 tracking-wider">
-              © 2025 Annie Patricia. All rights reserved.
-            </p>
-            <div className="flex gap-6">
+        {/* Bottom strip */}
+        <div className="border-t border-white/5">
+          <div className="max-w-screen-xl mx-auto px-8 lg:px-16 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-gray-600 font-inter">© 2025 Annie Patricia. All rights reserved.</p>
+            <div className="flex items-center gap-5">
               {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((item) => (
-                <a key={item} href="#" className="font-inter text-xs text-cream/25 hover:text-gold transition-colors tracking-wider">
+                <a key={item} href="#" className="text-xs text-gray-600 hover:text-gray-400 transition-colors font-inter">
                   {item}
                 </a>
+              ))}
+            </div>
+            {/* Payment icons */}
+            <div className="flex items-center gap-2">
+              {["VISA", "MC", "PAYSTACK"].map((p) => (
+                <span key={p} className="text-[9px] font-bold text-gray-600 border border-gray-700 px-2 py-1 tracking-wider">{p}</span>
               ))}
             </div>
           </div>
         </div>
       </footer>
+
+      {/* Mobile bottom spacer */}
+      <div className="md:hidden h-16" />
     </>
   );
 };

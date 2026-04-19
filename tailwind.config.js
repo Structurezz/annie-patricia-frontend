@@ -8,18 +8,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        gold: '#C9A96E',
-        'gold-light': '#E8C98A',
-        cream: '#FAF6F0',
-        'warm-white': '#F5F0E8',
-        brand: '#0C0B09',
+        gold: '#B8860B',
+        'gold-light': '#D4A017',
+        cream: '#FAFAF8',
+        'warm-white': '#F5F4F0',
+        brand: '#111111',
         burgundy: '#7B2D3A',
-        'text-dark': '#1A1208',
-        'text-muted': '#8C7B6B',
+        'text-dark': '#111111',
+        'text-muted': '#6B7280',
+        border: '#E5E5E5',
       },
       fontFamily: {
         playfair: ['"Playfair Display"', 'Georgia', 'serif'],
         inter: ['Inter', 'sans-serif'],
+      },
+      transitionDuration: {
+        '250': '250ms',
+        '600': '600ms',
+      },
+      scale: {
+        '102': '1.02',
+        '103': '1.03',
+        '105': '1.05',
+        '107': '1.07',
+        '108': '1.08',
       },
     },
   },
