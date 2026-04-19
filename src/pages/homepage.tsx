@@ -19,9 +19,8 @@ import { Link } from "react-router-dom";
 import CategoryModal from "../components/CategoryModal";
 import { categories as productCategories } from "../components/data/products";
 
-
 // ---------- REDUX ----------
-import { useAppDispatch, useAppSelector } from "../store/hooks";   // <-- create this file
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addToCart, removeFromCart, updateQuantity, clearCart } from "../store/cartSlice";
 // ---------------------------
 
@@ -30,7 +29,7 @@ import { allProducts, FLOATING_CATEGORIES } from "../components/data/products";
 
 // Filter NEW & BESTSELLERS for home
 const featuredProducts = allProducts
-  .filter(p => p.badge === "NEW" || p.badge === "BESTSELLER")
+  .filter((p) => p.badge === "NEW" || p.badge === "BESTSELLER")
   .slice(0, 12);
 
 interface Category {
@@ -49,14 +48,13 @@ const generatePlaceholder = (text: string, width = 400, height = 600) => {
   const encodedText = encodeURIComponent(text || "No Image");
   return `https://via.placeholder.com/${width}x${height}/eeeeee/999999?text=${encodedText}`;
 };
-// Helper: safely get image
-function getSafeImage(img) {
+
+function getSafeImage(img: string) {
   if (!img || typeof img !== "string" || img.trim() === "") {
-    return "/images/placeholder-book.png"; // your existing placeholder asset
+    return "/images/placeholder-book.png";
   }
   return img;
 }
-
 
 const Home: React.FC = () => {
   // ---------- WISHLIST (localStorage) ----------
@@ -67,10 +65,10 @@ const Home: React.FC = () => {
 
   // ---------- CART FROM REDUX ----------
   const dispatch = useAppDispatch();
-  const cartItems = useAppSelector(state => state.cart.items);
+  const cartItems = useAppSelector((state) => state.cart.items);
   const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
   const [modalOpen, setModalOpen] = useState(false);
-const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } | null>(null);
+  const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } | null>(null);
 
   // ---------- SCROLL ----------
   const [scrolled, setScrolled] = useState(false);
@@ -84,7 +82,7 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
   // ---------- WISHLIST HANDLERS ----------
   const toggleWishlist = (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    setWishlist(prev => {
+    setWishlist((prev) => {
       const newSet = new Set(prev);
       newSet.has(id) ? newSet.delete(id) : newSet.add(id);
       return newSet;
@@ -140,18 +138,16 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50">
+    <div className="min-h-screen flex flex-col bg-cream">
       {/* Pass live counts to Topbar */}
       <Topbar wishlistCount={wishlist.size} cartCount={cartCount} />
-      
 
-
-      {/* HERO VIDEO SECTION */}
+      {/* ── HERO VIDEO SECTION ── */}
       <section className="relative h-screen overflow-hidden">
         <motion.video
-          initial={{ scale: 1.1 }}
+          initial={{ scale: 1.08 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 1.8, ease: "easeOut" }}
+          transition={{ duration: 2.5, ease: "easeOut" }}
           src="/hero_vid.mp4"
           autoPlay
           loop
@@ -159,270 +155,349 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        {/* Dark overlay with warm gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-brand/90 via-brand/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand/30 via-transparent to-brand/30" />
 
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-6 text-white z-10">
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="text-5xl md:text-7xl font-light tracking-tight mb-6"
+          <motion.p
+            initial={{ opacity: 0, letterSpacing: "0.4em" }}
+            animate={{ opacity: 1, letterSpacing: "0.3em" }}
+            transition={{ delay: 0.3, duration: 1.2 }}
+            className="text-gold text-xs md:text-sm tracking-[0.4em] mb-6 font-inter uppercase"
           >
-            Annie Patricia
+            Nigerian Luxury Fashion
+          </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 1.2, ease: "easeOut" }}
+            className="font-playfair text-6xl md:text-8xl lg:text-9xl font-light tracking-tight mb-6 leading-none"
+          >
+            WEAR YOUR
+            <br />
+            <span className="italic text-gold">HERITAGE</span>
           </motion.h1>
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="text-lg md:text-xl max-w-xl mb-10 opacity-90"
+            transition={{ delay: 1, duration: 1 }}
+            className="font-inter text-base md:text-lg max-w-md mb-12 text-cream/80 tracking-wider"
           >
-            Nigerian luxury. Global craft. Timeless design.
+            Luxury Nigerian Fashion
           </motion.p>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.3, duration: 0.8 }}
+            className="flex flex-col sm:flex-row gap-4"
+          >
             <motion.a
               href="/category"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white text-black px-10 py-4 font-medium tracking-wider rounded-md shadow-lg hover:bg-gray-100 transition"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="border border-gold text-gold px-10 py-4 font-inter text-xs tracking-[0.3em] hover:bg-gold hover:text-brand transition-all duration-300"
             >
               SHOP WOMEN
             </motion.a>
             <motion.a
               href="/category"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="border border-white px-10 py-4 font-medium tracking-wider rounded-md hover:bg-white hover:text-black transition"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="border border-cream/40 text-cream px-10 py-4 font-inter text-xs tracking-[0.3em] hover:border-gold hover:text-gold transition-all duration-300"
             >
               SHOP MEN
             </motion.a>
-          </div>
+          </motion.div>
         </div>
 
+        {/* Scroll indicator */}
         <motion.div
           animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white"
+          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-gold/70 z-10"
         >
-          <ArrowDownIcon className="w-6 h-6" />
+          <ArrowDownIcon className="w-5 h-5" />
         </motion.div>
       </section>
 
-      {/* FLOATING CATEGORY PILLS */}
+      {/* ── FLOATING CATEGORY PILLS ── */}
       <motion.div
-  initial={{ opacity: 0, y: -20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: 1.2 }}
-  className={`fixed top-32 left-1/2 -translate-x-1/2 z-40 transition-all duration-300 ${
-    scrolled ? "top-20 bg-white/90 backdrop-blur-lg shadow-md" : "top-32 bg-white/100"
-  } rounded-full px-6 py-3 hidden md:flex gap-6`}
->
-  {FLOATING_CATEGORIES.map((cat) => (
-    <button
-      key={cat.value}
-      onClick={() => {
-        setSelectedCat({ label: cat.label, value: cat.value });
-        setModalOpen(true);
-      }}
-      className={`text-sm font-medium tracking-widest transition-colors ${
-        scrolled ? "text-gray-800 hover:text-black" : "text-black hover:text-black"
-      }`}
-    >
-      {cat.label}
-    </button>
-  ))}
-</motion.div>
-
-{/* MODAL */}
-{selectedCat && (
-  <CategoryModal
-    isOpen={modalOpen}
-    onClose={() => {
-      setModalOpen(false);
-      setSelectedCat(null);
-    }}
-    category={selectedCat.value}
-    label={selectedCat.label}
-  />
-)}
-
-      {/* SHOP BY CATEGORY CAROUSEL */}
-
-
-
-
-
-      {/* NEW ARRIVALS GRID */}
-    {/* NEW ARRIVALS GRID */}
-    <section className="py-24 px-6 md:px-12 lg:px-20 bg-stone-50">
-  <div className="max-w-7xl mx-auto">
-
-    {/* SECTION TITLE */}
-    <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      className="text-center mb-16"
-    >
-      <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-4">
-        New Arrivals
-      </h2>
-      <p className="text-gray-600 text-lg">Curated for the modern wardrobe</p>
-    </motion.div>
-
-    {/* PRODUCT GRID */}
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-      {featuredProducts.map((product, index) => (
-        <motion.article
-          key={product.id}
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: index * 0.1 }}
-          className="group"
-        >
-          <Link to={`/product/${product.id}`} className="block">
-
-            {/* IMAGE */}
-            <div className="relative overflow-hidden bg-gray-100 aspect-[3/4] mb-5">
-              {product.badge && (
-                <span className="absolute top-4 left-4 bg-black text-white text-xs font-bold px-3 py-1.5 rounded-md z-20 tracking-wider">
-                  {product.badge}
-                </span>
-              )}
-
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                loading="lazy"
-              />
-
-              {/* WISHLIST BUTTON */}
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleWishlist(product.id, e);
-                }}
-                className="absolute top-4 right-4 p-3 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-20"
-              >
-                {wishlist.has(product.id) ? (
-                  <HeartSolid className="w-5 h-5 text-red-500" />
-                ) : (
-                  <HeartOutline className="w-5 h-5 text-gray-700" />
-                )}
-              </button>
-
-              {/* QUICK ADD */}
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleAddToCart(product, e);
-                  }}
-                  className="w-full text-white font-medium text-sm tracking-wider hover:underline"
-                >
-                  QUICK ADD +
-                </button>
-              </div>
-            </div>
-
-            {/* INFO */}
-            <div className="space-y-1">
-              <p className="text-sm text-gray-500 tracking-wider">{product.designer}</p>
-              <h3 className="font-medium text-lg line-clamp-1">{product.name}</h3>
-              <p className="text-lg font-medium">₦{product.price.toLocaleString()}</p>
-            </div>
-
-          </Link>
-        </motion.article>
-      ))}
-    </div>
-
-    {/* VIEW ALL BUTTON */}
-    <div className="text-center mt-16">
-      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-        <Link
-          to="/category?category=New%20Arrivals"
-          className="inline-block border border-black px-12 py-4 font-medium tracking-wider hover:bg-black hover:text-white transition"
-        >
-          VIEW ALL NEW ARRIVALS
-        </Link>
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2 }}
+        className={`fixed top-32 left-1/2 -translate-x-1/2 z-40 transition-all duration-300 ${
+          scrolled ? "top-20 bg-brand/95 backdrop-blur-lg shadow-lg shadow-black/20 border border-gold/20" : "top-32 bg-brand/80 backdrop-blur-md"
+        } px-8 py-3 hidden md:flex gap-8`}
+      >
+        {FLOATING_CATEGORIES.map((cat) => (
+          <button
+            key={cat.value}
+            onClick={() => {
+              setSelectedCat({ label: cat.label, value: cat.value });
+              setModalOpen(true);
+            }}
+            className="text-xs font-inter font-medium tracking-[0.2em] text-cream/70 hover:text-gold transition-colors gold-underline"
+          >
+            {cat.label}
+          </button>
+        ))}
       </motion.div>
-    </div>
 
-  </div>
-</section>
+      {/* MODAL */}
+      {selectedCat && (
+        <CategoryModal
+          isOpen={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedCat(null);
+          }}
+          category={selectedCat.value}
+          label={selectedCat.label}
+        />
+      )}
 
+      {/* ── FEATURED PRODUCTS ── */}
+      <section className="py-24 px-6 md:px-12 lg:px-20 bg-cream">
+        <div className="max-w-7xl mx-auto">
 
-      {/* EDITORIAL LOOKBOOK */}
-      <section className="py-24 px-6 md:px-12 bg-white">
+          {/* Section heading */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <p className="text-gold text-xs tracking-[0.4em] mb-4 font-inter uppercase">Curated Collection</p>
+            <h2 className="font-playfair text-5xl md:text-6xl font-light text-text-dark mb-4">
+              New Arrivals
+            </h2>
+            <div className="w-16 h-px bg-gold mx-auto mt-6" />
+          </motion.div>
+
+          {/* Product grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 lg:gap-12">
+            {featuredProducts.map((product, index) => (
+              <motion.article
+                key={product.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08, duration: 0.6 }}
+                className="group"
+              >
+                <Link to={`/product/${product.id}`} className="block">
+                  {/* Image container */}
+                  <div className="relative overflow-hidden bg-warm-white aspect-[3/4] mb-5">
+                    {product.badge && (
+                      <span className="absolute top-4 left-4 bg-brand text-gold text-xs font-inter font-medium px-3 py-1.5 z-20 tracking-[0.15em]">
+                        {product.badge}
+                      </span>
+                    )}
+
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-107 transition-transform duration-700"
+                      loading="lazy"
+                    />
+
+                    {/* Dark overlay on hover */}
+                    <div className="absolute inset-0 bg-brand/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                      <p className="font-playfair text-lg text-cream mb-1">{product.name}</p>
+                      <p className="text-gold font-inter text-sm mb-4">₦{product.price.toLocaleString()}</p>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddToCart(product, e);
+                        }}
+                        className="w-full border border-gold text-gold text-xs tracking-[0.2em] py-2.5 hover:bg-gold hover:text-brand transition-all duration-300 font-inter"
+                      >
+                        ADD TO BAG
+                      </button>
+                    </div>
+
+                    {/* Wishlist */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleWishlist(product.id, e);
+                      }}
+                      className="absolute top-4 right-4 p-2 bg-brand/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-brand z-30"
+                    >
+                      {wishlist.has(product.id) ? (
+                        <HeartSolid className="w-4 h-4 text-gold" />
+                      ) : (
+                        <HeartOutline className="w-4 h-4 text-cream" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Product info */}
+                  <div className="space-y-1.5">
+                    <p className="text-xs font-inter text-text-muted tracking-[0.15em] uppercase">{product.designer}</p>
+                    <h3 className="font-playfair text-base text-text-dark line-clamp-1">{product.name}</h3>
+                    <p className="text-gold font-inter text-sm font-medium">₦{product.price.toLocaleString()}</p>
+                  </div>
+                </Link>
+              </motion.article>
+            ))}
+          </div>
+
+          {/* View all */}
+          <div className="text-center mt-16">
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Link
+                to="/category?category=New%20Arrivals"
+                className="inline-block border border-brand text-brand px-14 py-4 font-inter text-xs tracking-[0.3em] hover:bg-brand hover:text-cream transition-all duration-300"
+              >
+                VIEW ALL NEW ARRIVALS
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── OUR STORY ── */}
+      <section className="py-24 bg-warm-white">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            {/* Image */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              <div className="aspect-[3/4] overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=80"
+                  alt="Our Story"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Decorative gold border offset */}
+              <div className="absolute -bottom-4 -right-4 w-3/4 h-3/4 border border-gold/40 -z-10" />
+            </motion.div>
+
+            {/* Text */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-6"
+            >
+              {/* Gold accent line */}
+              <div className="w-12 h-0.5 bg-gold" />
+              <p className="text-gold text-xs tracking-[0.4em] font-inter uppercase">Our Heritage</p>
+              <h2 className="font-playfair text-4xl md:text-5xl text-text-dark leading-tight">
+                Where Lagos Meets
+                <br />
+                <span className="italic">Luxury</span>
+              </h2>
+              <p className="font-inter text-text-muted leading-relaxed">
+                Annie Patricia was born from the intersection of Nigerian heritage and contemporary luxury.
+                Every piece tells a story — of Aso-oke craftsmanship, of Lagos streets at golden hour,
+                of a culture that dresses to celebrate.
+              </p>
+              <p className="font-inter text-text-muted leading-relaxed">
+                We work with master artisans across Nigeria to bring you garments that honor tradition
+                while speaking fluently to the modern wardrobe. This is not just fashion. This is identity.
+              </p>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="pt-4">
+                <Link
+                  to="/about"
+                  className="inline-block border border-gold text-gold px-10 py-3 font-inter text-xs tracking-[0.3em] hover:bg-gold hover:text-brand transition-all duration-300"
+                >
+                  READ OUR STORY
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── EDITORIAL LOOKBOOK ── */}
+      <section className="py-24 px-6 md:px-12 bg-brand">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-4">The Edit</h2>
-            <p className="text-gray-600 text-lg">Seasonal stories, styled</p>
+            <p className="text-gold text-xs tracking-[0.4em] mb-4 font-inter uppercase">Editorial</p>
+            <h2 className="font-playfair text-5xl md:text-6xl font-light text-cream">The Edit</h2>
+            <div className="w-16 h-px bg-gold mx-auto mt-6" />
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {looks.map((look, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.2 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
                 className="group cursor-pointer"
               >
-                <div className="relative overflow-hidden aspect-[4/5] mb-6">
+                <div className="relative overflow-hidden aspect-[4/5] mb-5">
                   <img
                     src={look.image}
                     alt={look.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand/80 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className="font-playfair text-xl text-cream mb-1">{look.title}</h3>
+                    <p className="font-inter text-xs text-gold/80 tracking-wider">{look.description}</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-medium mb-2">{look.title}</h3>
-                <p className="text-gray-600">{look.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* INSTAGRAM / UGC SECTION */}
-      <section className="py-24 px-6 md:px-12 bg-stone-50">
+      {/* ── INSTAGRAM / UGC ── */}
+      <section className="py-24 px-6 md:px-12 bg-cream">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
             className="mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-4">
+            <p className="text-gold text-xs tracking-[0.4em] mb-3 font-inter uppercase">Community</p>
+            <h2 className="font-playfair text-4xl md:text-5xl font-light text-text-dark">
               @ANNIEPATRICIA
             </h2>
-            <p className="text-gray-600">Tag us in your looks</p>
+            <p className="font-inter text-text-muted mt-3 text-sm tracking-wider">Tag us in your looks</p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
             {instagramPosts.map((post, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className="aspect-square overflow-hidden group cursor-pointer"
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="aspect-square overflow-hidden group cursor-pointer relative"
               >
                 <img
                   src={post}
                   alt="Instagram post"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-600"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition" />
+                <div className="absolute inset-0 bg-brand/0 group-hover:bg-brand/30 transition-colors duration-300" />
               </motion.div>
             ))}
           </div>
@@ -431,65 +506,69 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
             href="https://instagram.com/anniepatricia"
             target="_blank"
             rel="noopener"
-            whileHover={{ scale: 1.05 }}
-            className="inline-block mt-10 text-sm tracking-widest hover:underline"
+            whileHover={{ scale: 1.02 }}
+            className="inline-block mt-10 text-xs font-inter tracking-[0.3em] text-text-muted hover:text-gold transition-colors border-b border-text-muted hover:border-gold pb-0.5"
           >
             FOLLOW ON INSTAGRAM
           </motion.a>
         </div>
       </section>
 
-      {/* NEWSLETTER SIGNUP */}
-      <section className="py-20 px-6 bg-black text-white">
+      {/* ── NEWSLETTER ── */}
+      <section className="py-24 px-6 bg-brand">
         <div className="max-w-2xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
           >
-            <SparklesIcon className="w-10 h-10 mx-auto mb-6 text-yellow-400" />
-            <h3 className="text-2xl md:text-3xl font-light mb-4">Join the Inner Circle</h3>
-            <p className="text-gray-300 mb-8">First access to drops, private sales, and styling notes.</p>
+            <div className="w-12 h-px bg-gold mx-auto mb-8" />
+            <p className="text-gold text-xs tracking-[0.4em] mb-4 font-inter uppercase">Inner Circle</p>
+            <h3 className="font-playfair text-3xl md:text-4xl text-cream font-light mb-4">
+              Join the Conversation
+            </h3>
+            <p className="font-inter text-cream/60 mb-10 tracking-wider text-sm">
+              First access to drops, private sales, and styling notes from Lagos.
+            </p>
 
             <form
               onSubmit={(e) => e.preventDefault()}
-              className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+              className="flex flex-col sm:flex-row gap-0 max-w-md mx-auto border border-gold/40"
             >
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your email"
-                className="flex-1 px-6 py-4 bg-white/10 border border-white/30 rounded-md placeholder-gray-400 focus:outline-none focus:border-white transition"
+                placeholder="Your email address"
+                className="flex-1 px-6 py-4 bg-transparent text-cream placeholder-cream/30 focus:outline-none font-inter text-sm border-r border-gold/40"
               />
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-4 bg-white text-black font-medium rounded-md hover:bg-gray-100 transition"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                className="px-8 py-4 bg-gold text-brand font-inter text-xs tracking-[0.2em] font-medium hover:bg-gold-light transition-colors whitespace-nowrap"
               >
                 SUBSCRIBE
               </motion.button>
             </form>
-            <p className="text-xs text-gray-400 mt-4">No spam. Unsubscribe anytime.</p>
+            <p className="text-xs font-inter text-cream/30 mt-4 tracking-wider">No spam. Unsubscribe anytime.</p>
           </motion.div>
         </div>
       </section>
 
-      {/* FLOATING CART & WISHLIST */}
+      {/* ── FLOATING CART & WISHLIST ── */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 1.5 }}
-        className="fixed bottom-16 right-8 flex flex-col gap-3 z-60"
+        className="fixed bottom-16 right-6 flex flex-col gap-3 z-50"
       >
         <Link
           to="/cart"
-          className="relative p-4 bg-black text-white rounded-full shadow-xl"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          className="relative p-4 bg-brand border border-gold/40 text-gold rounded-none shadow-2xl hover:bg-gold hover:text-brand transition-all duration-300"
         >
-          <ShoppingBagIcon className="w-6 h-6" />
+          <ShoppingBagIcon className="w-5 h-5" />
           {cartCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium animate-pulse">
+            <span className="absolute -top-2 -right-2 bg-gold text-brand text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
               {cartCount}
             </span>
           )}
@@ -497,17 +576,15 @@ const [selectedCat, setSelectedCat] = useState<{ label: string; value: string } 
 
         <Link
           to="/saved"
-          className="relative p-4 bg-white border border-gray-300 rounded-full shadow-xl"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          className="relative p-4 bg-brand border border-gold/40 text-gold rounded-none shadow-2xl hover:bg-gold hover:text-brand transition-all duration-300"
         >
           {wishlist.size > 0 ? (
-            <HeartSolid className="w-6 h-6 text-red-500" />
+            <HeartSolid className="w-5 h-5" />
           ) : (
-            <HeartOutline className="w-6 h-6 text-gray-800" />
+            <HeartOutline className="w-5 h-5" />
           )}
           {wishlist.size > 0 && (
-            <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium">
+            <span className="absolute -top-2 -right-2 bg-gold text-brand text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
               {wishlist.size}
             </span>
           )}

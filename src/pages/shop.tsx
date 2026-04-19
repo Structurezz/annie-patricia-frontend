@@ -13,19 +13,18 @@ import {
   XMarkIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ShoppingBagIcon 
+  ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 
 import { allProducts, categories as productCategories } from "../components/data/products";
-import { useAppDispatch, useAppSelector } from "../store/hooks";   // <-- create this file
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addToCart } from "../store/cartSlice";
-
 
 // Subcategories
 const subcategories = [
   "All Subcategories",
-  ...new Set(allProducts.map(p => p.subcategory).filter(Boolean))
+  ...new Set(allProducts.map((p) => p.subcategory).filter(Boolean)),
 ].sort();
 
 const sortOptions = [
@@ -47,27 +46,17 @@ const Shop: React.FC = () => {
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
   const [mobileFiltersOpen, setMobileFiltersOpen] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const cartItems = useAppSelector(state => state.cart.items);
+  const cartItems = useAppSelector((state) => state.cart.items);
   const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
   const [wishlist, setWishlist] = useState<Set<number>>(() => {
     const saved = localStorage.getItem("wishlist");
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
-  
 
   // Always scroll to top whenever filters, sorting, category, or page changes
-React.useEffect(() => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}, [
-  selectedCategory,
-  selectedSubcategory,
-  priceRange,
-  sortBy,
-  viewMode,
-  currentPage,
-  location.search
-]);
-
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [selectedCategory, selectedSubcategory, priceRange, sortBy, viewMode, currentPage, location.search]);
 
   // Filter & Sort
   const filteredAndSorted = useMemo(() => {
@@ -107,47 +96,39 @@ React.useEffect(() => {
   };
 
   const handleAddToCart = (product: typeof allProducts[0]) => {
-    dispatch(addToCart({
-      id: product.id,
-      name: product.name,
-      designer: product.designer,
-      price: product.price,
-      image: product.image,
-    }));
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.name,
+        designer: product.designer,
+        price: product.price,
+        image: product.image,
+      })
+    );
   };
 
   // Read category from URL on every change
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
     const raw = params.get("category");
-  
+
     if (!raw) {
       setSelectedCategory("ALL");
       setCurrentPage(1);
       return;
     }
-  
-    // ---- NORMALISE ----
-    const normalised = raw
-      .trim()
-      .toUpperCase()
-      .replace(/\s+/g, ""); // remove spaces if any
-  
-    // Find a product that has the same normalised category
-    const matchingProduct = allProducts.find(p => {
-      const prodCat = (p.category || "")
-        .trim()
-        .toUpperCase()
-        .replace(/\s+/g, "");
+
+    const normalised = raw.trim().toUpperCase().replace(/\s+/g, "");
+
+    const matchingProduct = allProducts.find((p) => {
+      const prodCat = (p.category || "").trim().toUpperCase().replace(/\s+/g, "");
       return prodCat === normalised;
     });
-  
+
     if (matchingProduct) {
-      // Use the **exact** value from the product (preserves original case)
       setSelectedCategory(matchingProduct.category);
       setCurrentPage(1);
     } else {
-      // Unknown category → fallback to ALL
       setSelectedCategory("ALL");
       setCurrentPage(1);
     }
@@ -158,45 +139,47 @@ React.useEffect(() => {
       {/* Top Navigation */}
       <Topbar />
 
-      {/* HERO BANNER */}
-      <section className="relative h-64 md:h-40 overflow-hidden bg-black">
+      {/* ── SHOP HERO BANNER ── */}
+      <section className="relative h-56 md:h-48 overflow-hidden bg-brand">
         <img
           src="https://media.istockphoto.com/id/2180538528/photo/colorful-shopping-bags-on-a-bed.jpg?s=612x612&w=0&k=20&c=Iv6x7bK3f-XSiRRWn6o9VAXNt_lCxwquU-vVtmBB7H0="
           alt="Shop"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover opacity-20"
         />
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <p className="text-gold text-xs tracking-[0.4em] mb-3 font-inter uppercase">Discover</p>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-light text-white tracking-widest"
+            className="font-playfair text-5xl md:text-7xl font-light text-cream tracking-widest"
           >
             SHOP
           </motion.h1>
+          <div className="w-12 h-px bg-gold mt-5" />
         </div>
       </section>
 
-      {/* FILTERS BAR */}
-      <div className="sticky top-16 z-40 bg-white border-b shadow-sm">
+      {/* ── FILTERS BAR ── */}
+      <div className="sticky top-16 z-40 bg-warm-white border-b border-gold/15 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileFiltersOpen(true)}
-              className="md:hidden flex items-center gap-1.5 text-sm font-medium"
+              className="md:hidden flex items-center gap-1.5 text-xs font-inter tracking-widest text-text-dark hover:text-gold transition-colors"
             >
-              <AdjustmentsHorizontalIcon className="w-5 h-5" />
-              Filters
+              <AdjustmentsHorizontalIcon className="w-4 h-4" />
+              FILTERS
             </button>
-            <p className="text-sm text-gray-600">
+            <p className="font-inter text-xs text-text-muted tracking-wider">
               {filteredAndSorted.length} {filteredAndSorted.length === 1 ? "item" : "items"}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:border-black"
+              className="text-xs font-inter border border-gold/30 bg-transparent text-text-dark px-4 py-2 focus:outline-none focus:border-gold tracking-wider"
             >
               {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -205,40 +188,45 @@ React.useEffect(() => {
               ))}
             </select>
 
-            <div className="hidden md:flex items-center gap-1.5 border-l pl-3">
+            <div className="hidden md:flex items-center gap-1.5 border-l border-gold/20 pl-4">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 rounded ${viewMode === "grid" ? "bg-gray-100" : ""}`}
+                className={`p-1.5 transition-colors ${viewMode === "grid" ? "text-gold" : "text-text-muted hover:text-gold"}`}
               >
-                <Squares2X2Icon className="w-5 h-5" />
+                <Squares2X2Icon className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1.5 rounded ${viewMode === "list" ? "bg-gray-100" : ""}`}
+                className={`p-1.5 transition-colors ${viewMode === "list" ? "text-gold" : "text-text-muted hover:text-gold"}`}
               >
-                <Bars3Icon className="w-5 h-5" />
+                <Bars3Icon className="w-4 h-4" />
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="flex gap-6 md:gap-8">
+      {/* ── MAIN CONTENT ── */}
+      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="flex gap-8">
+
           {/* Desktop Sidebar */}
-          <aside className="hidden md:block w-64 flex-shrink-0">
-            <div className="space-y-8">
+          <aside className="hidden md:block w-56 flex-shrink-0">
+            <div className="space-y-10 sticky top-40">
+
+              {/* Category */}
               <div>
-                <h3 className="text-sm font-semibold tracking-wider mb-4">CATEGORY</h3>
-                <ul className="space-y-2">
+                <h3 className="font-inter text-xs tracking-[0.3em] text-gold mb-5 uppercase">Category</h3>
+                <ul className="space-y-2.5">
                   {productCategories.map((cat) => (
                     <li key={cat}>
                       <Link
                         to={`/category?category=${cat}`}
                         replace={selectedCategory === cat}
-                        className={`block w-full text-left text-sm ${
-                          selectedCategory === cat ? "font-medium text-black" : "text-gray-600 hover:text-black"
+                        className={`block font-inter text-xs tracking-wider transition-colors ${
+                          selectedCategory === cat
+                            ? "text-gold font-medium"
+                            : "text-text-muted hover:text-gold"
                         }`}
                         onClick={() => {
                           setSelectedCategory(cat);
@@ -252,15 +240,16 @@ React.useEffect(() => {
                 </ul>
               </div>
 
+              {/* Subcategory */}
               <div>
-                <h3 className="text-sm font-semibold tracking-wider mb-4">SUBCATEGORY</h3>
+                <h3 className="font-inter text-xs tracking-[0.3em] text-gold mb-5 uppercase">Subcategory</h3>
                 <select
                   value={selectedSubcategory}
                   onChange={(e) => {
                     setSelectedSubcategory(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full text-sm border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full font-inter text-xs border border-gold/30 bg-transparent text-text-dark px-3 py-2.5 focus:outline-none focus:border-gold"
                 >
                   {subcategories.map((sub) => (
                     <option key={sub} value={sub}>
@@ -270,10 +259,14 @@ React.useEffect(() => {
                 </select>
               </div>
 
+              {/* Price */}
               <div>
-                <h3 className="text-sm font-semibold tracking-wider mb-4">
-                  PRICE: ₦{priceRange[0].toLocaleString()} - ₦{priceRange[1].toLocaleString()}
+                <h3 className="font-inter text-xs tracking-[0.3em] text-gold mb-5 uppercase">
+                  Price Range
                 </h3>
+                <p className="font-inter text-xs text-text-muted mb-3 tracking-wider">
+                  ₦{priceRange[0].toLocaleString()} — ₦{priceRange[1].toLocaleString()}
+                </p>
                 <input
                   type="range"
                   min="0"
@@ -284,17 +277,39 @@ React.useEffect(() => {
                     setPriceRange([priceRange[0], Number(e.target.value)]);
                     setCurrentPage(1);
                   }}
-                  className="w-full"
+                  className="w-full gold-range"
+                  style={{
+                    background: `linear-gradient(to right, #C9A96E 0%, #C9A96E ${(priceRange[1] / 500000) * 100}%, #E8C98A20 ${(priceRange[1] / 500000) * 100}%, #E8C98A20 100%)`,
+                    height: "2px",
+                    appearance: "none",
+                    outline: "none",
+                    cursor: "pointer",
+                  }}
                 />
               </div>
+
+              {/* Clear */}
+              <button
+                onClick={() => {
+                  setSelectedCategory("ALL");
+                  setSelectedSubcategory("All Subcategories");
+                  setPriceRange([0, 500000]);
+                  setCurrentPage(1);
+                  window.history.replaceState({}, "", "/category");
+                }}
+                className="w-full border border-gold/40 text-gold text-xs font-inter tracking-[0.2em] py-2.5 hover:bg-gold hover:text-brand transition-all duration-300"
+              >
+                CLEAR FILTERS
+              </button>
             </div>
           </aside>
 
           {/* Product Grid / List */}
-          <main className="flex-1 pb-20 md:pb-0">
+          <main className="flex-1 pb-24 md:pb-0">
             {paginatedProducts.length === 0 ? (
-              <div className="text-center py-20">
-                <p className="text-gray-500">No products found matching your filters.</p>
+              <div className="text-center py-24">
+                <p className="font-playfair text-2xl text-text-muted mb-4">No pieces found</p>
+                <p className="font-inter text-sm text-text-muted mb-8 tracking-wider">Try adjusting your filters</p>
                 <button
                   onClick={() => {
                     setSelectedCategory("ALL");
@@ -303,9 +318,9 @@ React.useEffect(() => {
                     setCurrentPage(1);
                     window.history.replaceState({}, "", "/category");
                   }}
-                  className="mt-4 text-sm underline"
+                  className="border border-gold text-gold text-xs font-inter tracking-[0.3em] px-8 py-3 hover:bg-gold hover:text-brand transition-all"
                 >
-                  Clear filters
+                  CLEAR FILTERS
                 </button>
               </div>
             ) : (
@@ -317,23 +332,24 @@ React.useEffect(() => {
                         <motion.article
                           key={product.id}
                           layout
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
-                          transition={{ delay: i * 0.05 }}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ delay: i * 0.04 }}
                           className="group cursor-pointer"
                         >
                           <Link to={`/product/${product.id}`} className="block">
                             <div className="flex flex-col h-full">
-                              <div className="relative overflow-hidden bg-gray-100 aspect-[3/4] mb-3 rounded-lg">
+                              {/* Image */}
+                              <div className="relative overflow-hidden bg-warm-white aspect-[3/4] mb-4">
                                 {product.badge && (
-                                  <span className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 z-10 rounded">
+                                  <span className="absolute top-3 left-3 bg-brand text-gold text-xs font-inter px-2.5 py-1 z-10 tracking-[0.1em]">
                                     {product.badge}
                                   </span>
                                 )}
                                 {!product.inStock && (
-                                  <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
-                                    <span className="text-sm font-medium">Sold Out</span>
+                                  <div className="absolute inset-0 bg-cream/80 flex items-center justify-center z-20">
+                                    <span className="font-inter text-xs tracking-[0.2em] text-text-muted">SOLD OUT</span>
                                   </div>
                                 )}
                                 <img
@@ -341,35 +357,56 @@ React.useEffect(() => {
                                   alt={product.name}
                                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                 />
+
+                                {/* Hover overlay */}
+                                <div className="absolute inset-0 bg-brand/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                                  {product.inStock && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        handleAddToCart(product);
+                                      }}
+                                      className="w-full border-t border-gold/40 text-gold text-xs font-inter tracking-[0.2em] py-3 hover:bg-gold hover:text-brand transition-all duration-200"
+                                    >
+                                      QUICK ADD
+                                    </button>
+                                  )}
+                                </div>
+
+                                {/* Wishlist */}
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setWishlist((prev) => {
+                                      const next = new Set(prev);
+                                      next.has(product.id) ? next.delete(product.id) : next.add(product.id);
+                                      return next;
+                                    });
+                                  }}
+                                  className="absolute top-3 right-3 p-2 opacity-0 group-hover:opacity-100 bg-brand/60 transition-all z-20"
+                                >
+                                  {wishlist.has(product.id) ? (
+                                    <HeartSolid className="w-3.5 h-3.5 text-gold" />
+                                  ) : (
+                                    <HeartOutline className="w-3.5 h-3.5 text-cream" />
+                                  )}
+                                </button>
                               </div>
 
-                              <div className="flex flex-col flex-1">
-                                <p className="text-xs text-gray-500 tracking-wider uppercase">{product.designer}</p>
-                                <h3 className="font-medium text-sm line-clamp-2 mt-1">{product.name}</h3>
-                                <p className="text-base font-medium mt-2">
-                                  ₦{product.price.toLocaleString()}
-                                </p>
+                              {/* Info */}
+                              <div className="space-y-1">
+                                <p className="font-inter text-xs text-text-muted tracking-[0.15em] uppercase">{product.designer}</p>
+                                <h3 className="font-playfair text-sm text-text-dark line-clamp-2">{product.name}</h3>
+                                <p className="text-gold font-inter text-sm font-medium">₦{product.price.toLocaleString()}</p>
                               </div>
                             </div>
                           </Link>
-
-                          {product.inStock && (
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleAddToCart(product);
-                              }}
-                              className="mt-3 w-full px-4 py-2 border border-black text-sm font-medium hover:bg-black hover:text-white transition rounded-md"
-                            >
-                              ADD TO CART
-                            </button>
-                          )}
                         </motion.article>
                       ))}
                     </AnimatePresence>
                   </div>
                 ) : (
-                  <div className="space-y-5">
+                  <div className="space-y-4">
                     <AnimatePresence mode="popLayout">
                       {paginatedProducts.map((product, i) => (
                         <motion.article
@@ -378,11 +415,11 @@ React.useEffect(() => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          transition={{ delay: i * 0.05 }}
-                          className="group flex gap-4 items-start bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                          transition={{ delay: i * 0.04 }}
+                          className="group flex gap-6 items-start bg-warm-white p-5 hover:shadow-md transition-shadow border border-gold/10"
                         >
-                          <Link to={`/product/${product.id}`} className="flex gap-4 flex-1">
-                            <div className="w-28 h-36 sm:w-32 sm:h-40 flex-shrink-0 overflow-hidden bg-gray-100 rounded-md">
+                          <Link to={`/product/${product.id}`} className="flex gap-5 flex-1">
+                            <div className="w-28 h-36 sm:w-32 sm:h-40 flex-shrink-0 overflow-hidden bg-cream">
                               <img
                                 src={product.image}
                                 alt={product.name}
@@ -390,13 +427,11 @@ React.useEffect(() => {
                               />
                             </div>
                             <div className="flex-1">
-                              <p className="text-sm text-gray-500 tracking-wider">{product.designer}</p>
-                              <h3 className="font-medium text-base sm:text-lg mt-1">{product.name}</h3>
-                              <p className="text-lg font-medium mt-2">
-                                ₦{product.price.toLocaleString()}
-                              </p>
+                              <p className="font-inter text-xs text-text-muted tracking-[0.15em] uppercase mb-1">{product.designer}</p>
+                              <h3 className="font-playfair text-lg text-text-dark">{product.name}</h3>
+                              <p className="text-gold font-inter font-medium mt-2">₦{product.price.toLocaleString()}</p>
                               {product.badge && (
-                                <span className="inline-block mt-2 bg-black text-white text-xs px-2 py-1 rounded">
+                                <span className="inline-block mt-2 bg-brand text-gold text-xs font-inter px-2 py-1 tracking-wider">
                                   {product.badge}
                                 </span>
                               )}
@@ -405,7 +440,7 @@ React.useEffect(() => {
                           {product.inStock && (
                             <button
                               onClick={() => handleAddToCart(product)}
-                              className="self-start px-4 py-2 border border-black text-sm font-medium hover:bg-black hover:text-white transition rounded-md"
+                              className="self-center border border-gold text-gold text-xs font-inter tracking-[0.15em] px-5 py-2.5 hover:bg-gold hover:text-brand transition-all"
                             >
                               ADD
                             </button>
@@ -418,11 +453,11 @@ React.useEffect(() => {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex justify-center items-center gap-2 mt-10">
+                  <div className="flex justify-center items-center gap-2 mt-12">
                     <button
                       onClick={() => goToPage(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="p-2 rounded-md disabled:opacity-50"
+                      className="p-2 text-text-muted hover:text-gold transition-colors disabled:opacity-30"
                     >
                       <ChevronLeftIcon className="w-5 h-5" />
                     </button>
@@ -433,39 +468,43 @@ React.useEffect(() => {
                         <button
                           key={page}
                           onClick={() => goToPage(page)}
-                          className={`w-9 h-9 rounded-md text-sm font-medium ${
+                          className={`w-9 h-9 font-inter text-xs tracking-wider transition-all ${
                             currentPage === page
-                              ? "bg-black text-white"
-                              : "bg-gray-100 hover:bg-gray-200"
+                              ? "bg-gold text-brand"
+                              : "text-text-muted hover:text-gold border border-gold/20 hover:border-gold"
                           }`}
                         >
                           {page}
                         </button>
                       );
-                    }).concat(
-                      totalPages > 5 ? (
-                        <span key="ellipsis" className="px-2 text-gray-500">...</span>
-                      ) : []
-                    ).concat(
-                      totalPages > 5 ? (
-                        <button
-                          key={totalPages}
-                          onClick={() => goToPage(totalPages)}
-                          className={`w-9 h-9 rounded-md text-sm font-medium ${
-                            currentPage === totalPages
-                              ? "bg-black text-white"
-                              : "bg-gray-100 hover:bg-gray-200"
-                          }`}
-                        >
-                          {totalPages}
-                        </button>
-                      ) : []
-                    )}
+                    })
+                      .concat(
+                        totalPages > 5
+                          ? [<span key="ellipsis" className="px-2 font-inter text-text-muted">...</span>]
+                          : []
+                      )
+                      .concat(
+                        totalPages > 5
+                          ? [
+                              <button
+                                key={totalPages}
+                                onClick={() => goToPage(totalPages)}
+                                className={`w-9 h-9 font-inter text-xs tracking-wider transition-all ${
+                                  currentPage === totalPages
+                                    ? "bg-gold text-brand"
+                                    : "text-text-muted hover:text-gold border border-gold/20 hover:border-gold"
+                                }`}
+                              >
+                                {totalPages}
+                              </button>,
+                            ]
+                          : []
+                      )}
 
                     <button
                       onClick={() => goToPage(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="p-2 rounded-md disabled:opacity-50"
+                      className="p-2 text-text-muted hover:text-gold transition-colors disabled:opacity-30"
                     >
                       <ChevronRightIcon className="w-5 h-5" />
                     </button>
@@ -477,7 +516,7 @@ React.useEffect(() => {
         </div>
       </div>
 
-      {/* MOBILE FILTERS */}
+      {/* ── MOBILE FILTERS DRAWER ── */}
       <AnimatePresence>
         {mobileFiltersOpen && (
           <>
@@ -486,7 +525,7 @@ React.useEffect(() => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileFiltersOpen(false)}
-              className="fixed inset-0 bg-black/50 z-40 md:hidden"
+              className="fixed inset-0 bg-black/70 z-40 md:hidden backdrop-blur-sm"
             />
 
             <motion.div
@@ -494,33 +533,34 @@ React.useEffect(() => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 320 }}
-              className="fixed inset-0 bg-white z-50 md:hidden overflow-y-auto"
+              className="fixed inset-0 bg-brand z-50 md:hidden overflow-y-auto"
             >
               <div className="flex flex-col h-full">
-                <div className="flex justify-between items-center p-6 border-b border-gray-200">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-                    Filters
-                  </h1>
+                {/* Header */}
+                <div className="flex justify-between items-center p-6 border-b border-gold/20">
+                  <div>
+                    <p className="text-gold text-xs tracking-[0.3em] font-inter uppercase mb-1">Refine</p>
+                    <h2 className="font-playfair text-2xl text-cream">Filters</h2>
+                  </div>
                   <button
                     onClick={() => setMobileFiltersOpen(false)}
-                    className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-all hover:scale-110"
+                    className="p-2 text-cream/50 hover:text-gold transition-colors"
                   >
-                    <XMarkIcon className="h-6 w-6 text-gray-700" />
+                    <XMarkIcon className="h-6 w-6" />
                   </button>
                 </div>
 
-                <nav className="flex-1 p-6">
+                <nav className="flex-1 p-6 space-y-8">
                   {/* Category Grid */}
-                  <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                    {productCategories.map((cat, index) => (
-                      <motion.div
-                        key={cat}
-                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{ delay: index * 0.1, type: "spring", stiffness: 400 }}
-                        className="group"
-                      >
-                        <button
+                  <div>
+                    <h3 className="font-inter text-xs tracking-[0.3em] text-gold mb-5 uppercase">Category</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      {productCategories.map((cat, index) => (
+                        <motion.button
+                          key={cat}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.06 }}
                           onClick={() => {
                             setSelectedCategory(cat);
                             setCurrentPage(1);
@@ -528,78 +568,43 @@ React.useEffect(() => {
                             window.history.pushState({}, "", `/category?category=${cat}`);
                             window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
-                          className={`
-                            relative flex flex-col items-center justify-center p-6 rounded-2xl transition-all duration-300 w-full
-                            ${selectedCategory === cat
-                              ? "bg-red-600/10 text-red-600 shadow-lg ring-2 ring-red-600/20"
-                              : "bg-gray-50 text-gray-800 hover:bg-red-600/5 hover:text-red-600"
-                            }
-                            group-hover:shadow-xl group-hover:-translate-y-1
-                          `}
+                          className={`p-4 font-inter text-xs tracking-widest transition-all border ${
+                            selectedCategory === cat
+                              ? "bg-gold text-brand border-gold"
+                              : "border-gold/25 text-cream/60 hover:border-gold hover:text-gold"
+                          }`}
                         >
-                          <div className="mb-2">
-                            {cat === "DRESSES" && (
-                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M7 3h10l-1.5 7H8.5L7 3zM6 10h12l-1.5 7H7.5L6 10z" />
-                              </svg>
-                            )}
-                            {cat === "TOPS" && (
-                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2L2 12h3v8h14v-8h3L12 2z" />
-                              </svg>
-                            )}
-                            {cat === "BOTTOMS" && (
-                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2L2 12h3v8h14v-8h3L12 2z" />
-                              </svg>
-                            )}
-                            {cat === "ACCESSORIES" && (
-                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10" />
-                                <circle cx="12" cy="12" r="4" fill="white" />
-                              </svg>
-                            )}
-                            {cat === "SHOES" && (
-                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M21 16v-2l-8-5V3h-2v6l-8 5v2l8-2.5V19h2v-5.5l8 2.5z" />
-                              </svg>
-                            )}
-                            {cat === "ALL" && (
-                              <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M8 8h8v8H8z" fill="white" />
-                              </svg>
-                            )}
-                          </div>
-                          <span className="text-sm font-semibold tracking-wide">{cat}</span>
-                        </button>
-                      </motion.div>
-                    ))}
+                          {cat}
+                        </motion.button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Subcategory */}
-                  <div className="mt-10 px-4">
-                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Subcategory</h3>
-                    <motion.select
-                      whileTap={{ scale: 0.98 }}
+                  <div>
+                    <h3 className="font-inter text-xs tracking-[0.3em] text-gold mb-4 uppercase">Subcategory</h3>
+                    <select
                       value={selectedSubcategory}
                       onChange={(e) => {
                         setSelectedSubcategory(e.target.value);
                         setCurrentPage(1);
                       }}
-                      className="w-full text-sm border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-600/30 transition-all"
+                      className="w-full font-inter text-xs border border-gold/30 bg-transparent text-cream/70 px-4 py-3 focus:outline-none focus:border-gold"
                     >
                       {subcategories.map((sub) => (
-                        <option key={sub} value={sub}>{sub}</option>
+                        <option key={sub} value={sub} className="bg-brand text-cream">
+                          {sub}
+                        </option>
                       ))}
-                    </motion.select>
+                    </select>
                   </div>
 
                   {/* Price Range */}
-                  <div className="mt-8 px-4">
-                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">
-                      Price: ₦{priceRange[0].toLocaleString()} - ₦{priceRange[1].toLocaleString()}
-                    </h3>
+                  <div>
+                    <h3 className="font-inter text-xs tracking-[0.3em] text-gold mb-4 uppercase">Price Range</h3>
+                    <p className="font-inter text-xs text-cream/50 mb-4 tracking-wider">
+                      ₦{priceRange[0].toLocaleString()} — ₦{priceRange[1].toLocaleString()}
+                    </p>
                     <input
                       type="range"
                       min="0"
@@ -610,50 +615,35 @@ React.useEffect(() => {
                         setPriceRange([priceRange[0], Number(e.target.value)]);
                         setCurrentPage(1);
                       }}
-                      className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer"
+                      className="w-full gold-range"
                       style={{
-                        background: `linear-gradient(to right, #dc2626 0%, #dc2626 ${(priceRange[1] / 500000) * 100}%, #e5e7eb ${(priceRange[1] / 500000) * 100}%, #e5e7eb 100%)`,
+                        background: `linear-gradient(to right, #C9A96E 0%, #C9A96E ${(priceRange[1] / 500000) * 100}%, rgba(232,201,138,0.2) ${(priceRange[1] / 500000) * 100}%, rgba(232,201,138,0.2) 100%)`,
+                        height: "2px",
+                        appearance: "none",
+                        outline: "none",
+                        cursor: "pointer",
                       }}
                     />
-                    <style jsx>{`
-                      input[type="range"]::-webkit-slider-thumb {
-                        appearance: none;
-                        width: 18px;
-                        height: 18px;
-                        background: #dc2626;
-                        border-radius: 50%;
-                        cursor: grab;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                      }
-                      input[type="range"]::-webkit-slider-thumb:active {
-                        cursor: grabbing;
-                        transform: scale(1.2);
-                      }
-                    `}</style>
                   </div>
 
                   {/* Clear All */}
-                  <div className="mt-8 px-4">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        setSelectedCategory("ALL");
-                        setSelectedSubcategory("All Subcategories");
-                        setPriceRange([0, 500000]);
-                        setCurrentPage(1);
-                        setMobileFiltersOpen(false);
-                        window.history.replaceState({}, "", "/category");
-                      }}
-                      className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white font-medium py-3 rounded-xl hover:shadow-lg transition-all"
-                    >
-                      Clear All Filters
-                    </motion.button>
-                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory("ALL");
+                      setSelectedSubcategory("All Subcategories");
+                      setPriceRange([0, 500000]);
+                      setCurrentPage(1);
+                      setMobileFiltersOpen(false);
+                      window.history.replaceState({}, "", "/category");
+                    }}
+                    className="w-full border border-gold/40 text-gold font-inter text-xs tracking-[0.3em] py-3.5 hover:bg-gold hover:text-brand transition-all duration-300"
+                  >
+                    CLEAR ALL FILTERS
+                  </button>
                 </nav>
 
-                <div className="p-6 border-t border-gray-200 text-center">
-                  <p className="text-xs text-gray-500">
+                <div className="p-6 border-t border-gold/20 text-center">
+                  <p className="font-inter text-xs text-cream/40 tracking-wider">
                     {filteredAndSorted.length} {filteredAndSorted.length === 1 ? "item" : "items"} found
                   </p>
                 </div>
@@ -663,22 +653,20 @@ React.useEffect(() => {
         )}
       </AnimatePresence>
 
-         {/* FLOATING CART & WISHLIST */}
-         <motion.div
+      {/* ── FLOATING CART & WISHLIST ── */}
+      <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 1.5 }}
-        className="fixed bottom-16 right-8 flex flex-col gap-3 z-50"
+        className="fixed bottom-20 right-6 flex flex-col gap-3 z-50"
       >
         <Link
           to="/cart"
-          className="relative p-4 bg-black text-white rounded-full shadow-xl"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          className="relative p-4 bg-brand border border-gold/40 text-gold shadow-2xl hover:bg-gold hover:text-brand transition-all duration-300"
         >
-          <ShoppingBagIcon className="w-6 h-6" />
+          <ShoppingBagIcon className="w-5 h-5" />
           {cartCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium animate-pulse">
+            <span className="absolute -top-2 -right-2 bg-gold text-brand text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
               {cartCount}
             </span>
           )}
@@ -686,17 +674,15 @@ React.useEffect(() => {
 
         <Link
           to="/saved"
-          className="relative p-4 bg-white border border-gray-300 rounded-full shadow-xl"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          className="relative p-4 bg-brand border border-gold/40 text-gold shadow-2xl hover:bg-gold hover:text-brand transition-all duration-300"
         >
           {wishlist.size > 0 ? (
-            <HeartSolid className="w-6 h-6 text-red-500" />
+            <HeartSolid className="w-5 h-5" />
           ) : (
-            <HeartOutline className="w-6 h-6 text-gray-800" />
+            <HeartOutline className="w-5 h-5" />
           )}
           {wishlist.size > 0 && (
-            <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium">
+            <span className="absolute -top-2 -right-2 bg-gold text-brand text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
               {wishlist.size}
             </span>
           )}
