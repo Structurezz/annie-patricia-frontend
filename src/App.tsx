@@ -35,6 +35,8 @@ import Shipping      from "./pages/shipping";
 import Login    from "./pages/login";
 import Register from "./pages/register";
 
+import Account from "./pages/account";
+
 function App() {
   const dispatch    = useAppDispatch();
   const initialized = useAppSelector(s => s.auth.initialized);
@@ -84,7 +86,9 @@ function App() {
       {/* ── Auth ── */}
       <Route path="/login"    element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/account"  element={<Login />} />
+      <Route path="/account/*" element={<Account />} />
+
+
     </Routes>
   );
 }

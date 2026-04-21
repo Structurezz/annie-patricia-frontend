@@ -2,11 +2,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { allProducts } from "../components/data/products";
 import { useAppDispatch } from "../hooks/redux";
+import { useProduct, AdaptedProduct, useProducts } from "../hooks/useProducts";
 import { addToCart } from "../store/cartSlice";
 import Topbar from "./TopBar";
 import Footer from "./Footer";
+import ProductCard from "./ProductCard";
 
 interface Review { id: number; name: string; rating: number; date: string; comment: string; verified: boolean; avatar: string; }
 interface SizeOption { label: string; available: boolean; }
@@ -41,7 +42,6 @@ export default function ProductDetail() {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
-  const [product, setProduct] = useState<any>(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
@@ -55,31 +55,32 @@ export default function ProductDetail() {
   const reviewRef = useRef<HTMLDivElement>(null);
   const reviewInView = useInView(reviewRef, { once: true, margin: "-80px" });
 
+  const { product, loading: productLoading } = useProduct(id as string);
+  const { products: allProductsFromHook } = useProducts();
+
   useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [location.pathname]);
 
   useEffect(() => {
-    const found = allProducts.find(p => p.id === Number(id));
-    if (found) {
-      setProduct(found);
-      const sizes = sizeChart[found.category] || sizeChart.default;
-      const first = sizes.find(s => s.available);
-      if (first) setSelectedSize(first.label);
-    }
+    if (!product) return;
+    const sizes = sizeChart[product.category] || sizeChart.default;
+    const first = sizes.find(s => s.available);
+    if (first) setSelectedSize(first.label);
     // sync wishlist
     try {
       const saved = new Set<number>(JSON.parse(localStorage.getItem("wishlist") || "[]"));
-      setWishlisted(saved.has(Number(id)));
+      setWishlisted(saved.has(product.id));
     } catch {}
-  }, [id]);
+  }, [product]);
 
   const handleAddToCart = () => {
-    if (!selectedSize || !product.inStock) return;
-    dispatch(addToCart({ id: product.id, name: product.name, designer: product.designer, price: product.price, image: product.image, quantity: qty, size: selectedSize }));
+    if (!product || !selectedSize || !product.inStock) return;
+    dispatch(addToCart({ id: product.id, name: product.name, designer: product.designer, price: product.price, image: product.image }));
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   const handleWishlist = () => {
+    if (!product) return;
     const set = new Set<number>(JSON.parse(localStorage.getItem("wishlist") || "[]"));
     wishlisted ? set.delete(product.id) : set.add(product.id);
     localStorage.setItem("wishlist", JSON.stringify([...set]));
@@ -92,14 +93,14 @@ export default function ProductDetail() {
     setZoomPos({ x: ((e.clientX - rect.left) / rect.width) * 100, y: ((e.clientY - rect.top) / rect.height) * 100 });
   };
 
-  if (!product) {
+  if (productLoading || !product) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Topbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="w-10 h-10 border-2 border-[#111] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-sm text-gray-400 font-inter">Loading…</p>
+            <p className="text-sm text-gray-400 font-inter">{productLoading ? "Loading…" : "Product not found."}</p>
           </div>
         </div>
       </div>
@@ -108,7 +109,9 @@ export default function ProductDetail() {
 
   const sizes = sizeChart[product.category] || sizeChart.default;
   const galleryImages = [product.image, product.image, product.image, product.image];
-  const related = allProducts.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const related = allProductsFromHook.filter(
+    p => p.category === product.category && p.id !== product.id
+  ).slice(0, 4);
 
   const tabContent = {
     details: `Handcrafted from premium ${product.category === "Bubus" ? "aso-oke" : "ankara"} fabric sourced directly from master weavers. Each piece features hand-finished seams, custom embroidery details, and a fully lined interior. Designed by Annie Patricia in Lagos.`,
@@ -359,22 +362,7 @@ export default function ProductDetail() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {related.map((p, i) => (
-                <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * .08 }} className="group">
-                  <Link to={`/product/${p.id}`}>
-                    <div className="relative overflow-hidden bg-[#F5F4F0] aspect-[3/4] mb-3">
-                      <img src={p.image} alt={p.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
-                      <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <button onClick={e => { e.preventDefault(); dispatch(addToCart({ id: p.id, name: p.name, designer: p.designer, price: p.price, image: p.image })); }}
-                          className="w-full py-3 bg-white/95 text-[#111] text-[11px] font-semibold tracking-widest hover:bg-[#111] hover:text-white transition-colors">
-                          ADD TO BAG
-                        </button>
-                      </div>
-                    </div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 font-inter mb-0.5">{p.designer}</p>
-                    <h3 className="text-sm font-medium text-[#111] line-clamp-1 mb-1 font-inter">{p.name}</h3>
-                    <p className="text-sm font-semibold text-[#111] font-inter">₦{p.price.toLocaleString()}</p>
-                  </Link>
-                </motion.div>
+                <ProductCard key={p.id} product={p} animate delay={i * 0.08} />
               ))}
             </div>
           </div>

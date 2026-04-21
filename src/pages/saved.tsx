@@ -3,16 +3,17 @@
 
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { removeFromWishlist } from "../store/wishlistSlice";
-import { allProducts } from "../components/data/products";
+import { useProducts } from "../hooks/useProducts";
 import Topbar from "../components/TopBar";
 import Footer from "../components/Footer";
 
 export default function Saved() {
   const dispatch = useAppDispatch();
   const wishlistIds = useAppSelector((state) => state.wishlist.items);
-  const cartCount = useAppSelector((state) => 
+  const cartCount = useAppSelector((state) =>
     state.cart.items.reduce((sum, i) => sum + i.quantity, 0)
   );
+  const { products: allProducts } = useProducts();
 
   // Match IDs to real products
   const wishlistProducts = wishlistIds

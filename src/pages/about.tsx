@@ -5,192 +5,196 @@ import { Link } from "react-router-dom";
 import Topbar from "../components/TopBar";
 import Footer from "../components/Footer";
 
-const VALUES = [
-  { icon: "🌿", title: "Heritage Materials", body: "We source only the finest aso-oke, ankara, adire and kente fabrics directly from master weavers across Nigeria's six geopolitical zones." },
-  { icon: "🤝", title: "Artisan-First", body: "Every garment is hand-crafted by skilled Nigerian tailors, paid fairly and given creative recognition. We list artisan credits on every piece." },
-  { icon: "♻️", title: "Considered Production", body: "Small-batch drops. Zero overproduction. Fabric offcuts become accessories. We're working toward full carbon-neutral shipping by 2026." },
-  { icon: "✦", title: "Radical Authenticity", body: "We never compromise on the cultural integrity of our designs. Every motif has meaning, every pattern has a story we share openly." },
-];
-const TEAM = [
-  { name: "Annie Patricia", role: "Founder & Creative Director", img: "https://i.pravatar.cc/300?img=47", bio: "Born in Ikoyi, educated in London, drawn back to Lagos. Annie founded AP in 2020 after 8 years in European luxury fashion." },
-  { name: "Chidi Nwosu", role: "Head of Craft & Production", img: "https://i.pravatar.cc/300?img=12", bio: "Third-generation tailor from Aba, Abia State. Chidi leads our 14-person atelier and oversees quality across all collections." },
-  { name: "Sade Afolabi", role: "Head of Design", img: "https://i.pravatar.cc/300?img=45", bio: "SCAD-trained textile designer with a specialisation in traditional Nigerian print techniques and contemporary silhouette design." },
-];
-const TIMELINE = [
-  { year: "2020", title: "Founded in Lagos", body: "Annie Patricia launches from a small studio in Victoria Island with 12 pieces." },
-  { year: "2021", title: "First Collection", body: "The debut 'Heritage Reborn' collection sells out in 72 hours." },
-  { year: "2022", title: "Vogue Africa Feature", body: "Named one of West Africa's most exciting emerging luxury brands." },
-  { year: "2023", title: "London Flagship Opens", body: "Our Mayfair showroom opens, bringing Nigerian luxury to the global stage." },
-  { year: "2024", title: "5,000 Customers", body: "Milestone reached. Shipping to 12 countries across 4 continents." },
-  { year: "2025", title: "SS 2025 Collection", body: "Our biggest and most critically acclaimed collection to date." },
-];
-
-function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: .65, delay, ease: "easeOut" }} className={className}>
+// --- Specialized Animation Components ---
+const RevealText = ({ children, delay = 0 }) => (
+  <div className="overflow-hidden">
+    <motion.div
+      initial={{ y: "100%" }}
+      whileInView={{ y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+    >
       {children}
     </motion.div>
-  );
-}
+  </div>
+);
 
-export default function About() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, 100]);
+const ParallaxImage = ({ src, alt, speed = 0.1 }) => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div ref={ref} className="relative overflow-hidden w-full h-full">
+      <motion.img style={{ scale: 1.2, y }} src={src} alt={alt} className="w-full h-full object-cover" />
+    </div>
+  );
+};
+
+export default function AboutDetailed() {
+  return (
+    <div className="bg-[#F9F7F4] text-[#1A1A1A] font-inter selection:bg-[#B8860B] selection:text-white">
       <Topbar />
 
-      {/* HERO */}
-      <section ref={heroRef} className="relative h-[80vh] min-h-[500px] overflow-hidden bg-[#0D0C0A]">
-        <motion.div style={{ y: bgY }} className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=1600&q=85" alt="" className="w-full h-full object-cover opacity-40" />
-        </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
-        <div className="relative z-10 h-full flex items-center justify-center text-center px-6">
-          <div>
-            <motion.div initial={{ width: 0 }} animate={{ width: 48 }} transition={{ delay: .4, duration: .8 }} className="h-[2px] bg-[#B8860B] mx-auto mb-6" />
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .5 }} className="text-[#B8860B] text-xs tracking-[0.4em] uppercase font-inter mb-4">Est. Lagos 2020</motion.p>
-            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .6, duration: .8 }}
-              className="font-playfair text-6xl md:text-8xl text-white font-semibold leading-none mb-6">Our Story</motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="text-white/50 font-inter max-w-md mx-auto">Five years of craft, culture, and conscious luxury.</motion.p>
-          </div>
+      {/* 1. CINEMATIC HERO */}
+      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden bg-black">
+        <div className="absolute inset-0 opacity-60">
+          <ParallaxImage 
+            src="https://images.unsplash.com/photo-1590736962031-6ec68d0674f1?auto=format&fit=crop&q=80&w=2000" 
+            alt="Lagos Atelier" 
+          />
+        </div>
+        <div className="relative z-10 text-center px-6">
+          <RevealText>
+            <span className="text-[#B8860B] uppercase tracking-[0.4em] text-[11px] font-medium mb-4 block">
+              The House of Annie Patricia
+            </span>
+          </RevealText>
+          <RevealText delay={0.1}>
+            <h1 className="text-5xl md:text-8xl font-playfair italic text-white leading-tight mb-6">
+              A Love Letter <br /> to Nigeria
+            </h1>
+          </RevealText>
+        </div>
+        <div className="absolute bottom-12 left-12 hidden md:block">
+          <p className="text-white/40 text-[10px] tracking-widest leading-loose uppercase">
+            Est. 2020 <br /> Lagos, Nigeria
+          </p>
         </div>
       </section>
 
-      {/* MISSION */}
-      <section className="py-24 bg-white">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <FadeIn>
-            <p className="text-[#B8860B] text-xs tracking-[0.4em] uppercase font-inter mb-6">Our Mission</p>
-            <h2 className="font-playfair text-3xl md:text-5xl font-semibold text-[#111] leading-tight mb-8">
-              "Nigerian fashion deserves a seat at the global luxury table —{" "}
-              <em className="font-normal text-[#B8860B]">we're pulling up the chair.</em>"
-            </h2>
-            <div className="w-12 h-[2px] bg-[#B8860B] mx-auto mb-8" />
-            <p className="text-gray-500 font-inter text-lg leading-relaxed">
-              Annie Patricia was born from a simple belief: that the fabrics, skills, and stories of Nigeria belong on the world stage. We build garments that celebrate heritage without compromise — luxurious, contemporary, and proudly Nigerian.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* SPLIT STORY */}
-      <section className="bg-[#F7F5F2] py-24">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-16 grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <FadeIn>
-            <div className="relative">
-              <div className="aspect-[4/5] overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80" alt="" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute -bottom-5 -right-5 w-2/3 aspect-square border-2 border-[#B8860B]/30 -z-10" />
-              <div className="absolute top-6 left-6 bg-white p-4 shadow-xl">
-                <p className="font-playfair text-3xl font-semibold text-[#111]">2020</p>
-                <p className="text-xs text-[#B8860B] font-inter tracking-wider">Founded in Lagos</p>
-              </div>
+      {/* 2. THE ORIGIN STORY (The Founder's Journey) */}
+      <section className="py-24 lg:py-40 px-6">
+        <div className="max-w-screen-xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
+          <div className="relative">
+            <div className="aspect-[3/4] w-full md:w-4/5">
+              <ParallaxImage 
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80" 
+                alt="Annie Patricia" 
+              />
             </div>
-          </FadeIn>
-          <FadeIn delay={.2}>
-            <p className="text-[#B8860B] text-xs tracking-[0.4em] uppercase font-inter mb-4">The Beginning</p>
-            <h2 className="font-playfair text-3xl md:text-4xl font-semibold text-[#111] leading-tight mb-6">From a Victoria Island Studio to the World</h2>
-            <div className="space-y-4 text-gray-500 font-inter leading-relaxed">
-              <p>In 2020, Annie Patricia Okonkwo returned to Lagos after nearly a decade in European luxury fashion, carrying a singular idea: Nigerian craftsmanship is among the finest in the world — it just needed the right platform.</p>
-              <p>She started with 12 pieces, handmade by four artisans in a small Victoria Island studio. The collection sold out in 72 hours, shared entirely by word of mouth.</p>
-              <p>Today, we work with over 30 artisans across Nigeria, ship to 12 countries, and remain committed to the same founding principle: <strong className="text-[#111]">make things properly, honour the people who make them, and never compromise on cultural integrity.</strong></p>
+            <div className="absolute -bottom-10 -right-4 md:right-0 bg-[#111] text-white p-8 md:p-12 max-w-sm">
+              <h3 className="font-playfair italic text-2xl mb-4">"The London degree taught me technique; Lagos taught me soul."</h3>
+              <p className="text-xs text-white/50 tracking-widest uppercase">— Annie Patricia, Founder</p>
             </div>
-            <Link to="/category" className="inline-flex items-center gap-2 mt-8 text-sm font-medium text-[#111] border-b border-[#111] pb-0.5 hover:text-[#B8860B] hover:border-[#B8860B] transition-colors">
-              Explore the Collection <span>→</span>
-            </Link>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* VALUES */}
-      <section className="py-24">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-16">
-          <FadeIn className="text-center mb-16">
-            <p className="text-[#B8860B] text-xs tracking-[0.4em] uppercase font-inter mb-3">What We Stand For</p>
-            <h2 className="font-playfair text-4xl md:text-5xl font-semibold text-[#111]">Our Values</h2>
-          </FadeIn>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {VALUES.map((v, i) => (
-              <FadeIn key={v.title} delay={i * .1}>
-                <motion.div whileHover={{ y: -6 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="bg-[#F7F5F2] p-7 h-full border border-transparent hover:border-[#B8860B]/20 transition-colors">
-                  <span className="text-3xl mb-5 block">{v.icon}</span>
-                  <h3 className="font-playfair text-lg font-semibold text-[#111] mb-3">{v.title}</h3>
-                  <p className="text-sm text-gray-500 font-inter leading-relaxed">{v.body}</p>
-                </motion.div>
-              </FadeIn>
-            ))}
           </div>
-        </div>
-      </section>
-
-      {/* TIMELINE */}
-      <section className="py-24 bg-[#111] text-white">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-16">
-          <FadeIn className="text-center mb-16">
-            <p className="text-[#B8860B] text-xs tracking-[0.4em] uppercase font-inter mb-3">Our Journey</p>
-            <h2 className="font-playfair text-4xl md:text-5xl font-semibold">Five Years in the Making</h2>
-          </FadeIn>
-          <div className="relative max-w-2xl mx-auto">
-            <div className="absolute left-5 top-0 bottom-0 w-px bg-white/10" />
-            <div className="space-y-8 pl-14">
-              {TIMELINE.map((t, i) => (
-                <FadeIn key={t.year} delay={i * .08}>
-                  <div className="relative">
-                    <div className="absolute -left-[37px] w-3 h-3 bg-[#B8860B] rounded-full mt-1.5" />
-                    <p className="text-[#B8860B] text-xs font-bold tracking-[0.2em] font-inter mb-0.5">{t.year}</p>
-                    <h3 className="font-playfair text-lg font-semibold text-white mb-1">{t.title}</h3>
-                    <p className="text-sm text-white/50 font-inter">{t.body}</p>
-                  </div>
-                </FadeIn>
-              ))}
+          
+          <div className="space-y-8">
+            <span className="text-[#B8860B] text-xs font-bold tracking-widest uppercase">The Genesis</span>
+            <h2 className="text-4xl md:text-5xl font-playfair leading-[1.1]">From Ikoyi to Mayfair: A Return to Roots.</h2>
+            <div className="space-y-6 text-gray-600 leading-relaxed font-light text-lg">
+              <p>
+                In 2019, after eight years climbing the ranks of luxury houses in London and Paris, Annie returned to her childhood home in Ikoyi. She found her mother’s vintage Aso-Oke collection—hand-woven fabrics that had survived forty years with their luster intact.
+              </p>
+              <p>
+                Seeing the disconnect between Nigeria's rich textile history and the fast-fashion influx, Annie Patricia was founded. Not just as a label, but as a preservation project. 
+              </p>
+              <p>
+                What started with a single tailor in a converted garage is now a multi-continental bridge between West African artistry and global high-fashion.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* TEAM */}
-      <section className="py-24 bg-[#F7F5F2]">
-        <div className="max-w-screen-xl mx-auto px-6 lg:px-16">
-          <FadeIn className="text-center mb-16">
-            <p className="text-[#B8860B] text-xs tracking-[0.4em] uppercase font-inter mb-3">The Faces Behind AP</p>
-            <h2 className="font-playfair text-4xl md:text-5xl font-semibold text-[#111]">Meet the Team</h2>
-          </FadeIn>
+      {/* 3. EDUCATION: THE TEXTILE GLOSSARY (Interactive Cards) */}
+      <section className="bg-white py-24 px-6 border-y border-gray-100">
+        <div className="max-w-screen-xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="font-playfair text-4xl md:text-5xl mb-4 italic">Understanding Our Canvas</h2>
+            <p className="text-gray-500 font-light max-w-xl mx-auto">We don't just use fabric; we use heritage. Learn about the centuries-old techniques behind every AP garment.</p>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
-            {TEAM.map((m, i) => (
-              <FadeIn key={m.name} delay={i * .1}>
-                <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 280, damping: 22 }} className="bg-white group">
-                  <div className="aspect-[4/5] overflow-hidden">
-                    <img src={m.img} alt={m.name} className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-playfair text-xl font-semibold text-[#111] mb-0.5">{m.name}</h3>
-                    <p className="text-[#B8860B] text-xs font-inter tracking-wider uppercase mb-3">{m.role}</p>
-                    <p className="text-sm text-gray-500 font-inter leading-relaxed">{m.bio}</p>
-                  </div>
-                </motion.div>
-              </FadeIn>
+            {[
+              { name: "Aso-Oke", origin: "Yoruba Heritage", desc: "A prestigious hand-loomed cloth. We use 'Sanyan' and 'Alaari' variants, woven by families who have held the craft for five generations." },
+              { name: "Adire", origin: "Egba Artistry", desc: "Indigo-dyed cloth using resist-dyeing techniques. Every pattern represents a proverb or a blessing from the maker." },
+              { name: "Kente", origin: "West African Gold", desc: "A royal silk and cotton fabric of the Akan people. We source ours from master weavers to ensure authentic thread counts." }
+            ].map((item, i) => (
+              <motion.div 
+                key={i}
+                whileHover={{ y: -10 }}
+                className="p-10 border border-gray-50 hover:shadow-2xl hover:shadow-[#B8860B]/5 transition-all bg-[#FDFCFB]"
+              >
+                <span className="text-[#B8860B] text-[10px] tracking-[0.3em] uppercase block mb-4">{item.origin}</span>
+                <h4 className="font-playfair text-2xl mb-4">{item.name}</h4>
+                <p className="text-sm text-gray-500 leading-relaxed font-light">{item.desc}</p>
+                <div className="mt-8 h-px bg-gray-100 w-full" />
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 bg-white text-center px-6">
-        <FadeIn>
-          <p className="text-[#B8860B] text-xs tracking-[0.4em] uppercase font-inter mb-4">Start Exploring</p>
-          <h2 className="font-playfair text-3xl md:text-4xl font-semibold text-[#111] mb-6">Wear the Story</h2>
-          <Link to="/category" className="inline-block bg-[#111] text-white text-sm font-medium tracking-wider px-12 py-4 hover:bg-[#B8860B] transition-colors duration-300">
-            SHOP THE COLLECTION
-          </Link>
-        </FadeIn>
+      {/* 4. THE AP ACADEMY (Social Impact / Education) */}
+      <section className="py-24 px-6 lg:px-24">
+        <div className="max-w-screen-xl mx-auto bg-[#111] rounded-[40px] overflow-hidden flex flex-col lg:flex-row">
+          <div className="lg:w-1/2 p-12 lg:p-24 flex flex-col justify-center">
+            <h2 className="text-white font-playfair text-4xl md:text-5xl mb-6 italic">The AP Artisan Academy</h2>
+            <p className="text-white/60 font-light leading-relaxed mb-8">
+              True luxury is sustainable only if the skills are passed on. Since 2022, we have invested 15% of our profits into our Lagos-based academy, training the next generation of master tailors and weavers in traditional techniques and modern garment construction.
+            </p>
+            <div className="grid grid-cols-2 gap-8 text-white">
+              <div>
+                <span className="text-3xl font-playfair text-[#B8860B]">45+</span>
+                <p className="text-[10px] uppercase tracking-widest opacity-50 mt-2">Graduates to date</p>
+              </div>
+              <div>
+                <span className="text-3xl font-playfair text-[#B8860B]">100%</span>
+                <p className="text-[10px] uppercase tracking-widest opacity-50 mt-2">Fair Wage Certified</p>
+              </div>
+            </div>
+          </div>
+          <div className="lg:w-1/2 h-[400px] lg:h-auto">
+            <img 
+              src="https://images.unsplash.com/photo-1544441893-675973e31d85?w=800&q=80" 
+              className="w-full h-full object-cover" 
+              alt="Artisans at work"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 5. CRAFT STATS (The "Why") */}
+      <section className="py-24 bg-white">
+        <div className="max-w-screen-xl mx-auto px-6 grid md:grid-cols-4 gap-12 text-center">
+          {[
+            { label: "Hours per Garment", value: "72+" },
+            { label: "Partner Ateliers", value: "14" },
+            { label: "Zero-Waste Policy", value: "Since 2021" },
+            { label: "Global Presence", value: "12 Countries" }
+          ].map((stat, i) => (
+            <div key={i}>
+              <h5 className="text-3xl font-playfair italic mb-2">{stat.value}</h5>
+              <p className="text-[10px] uppercase tracking-widest text-[#B8860B] font-bold">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. FINAL MANIFESTO */}
+      <section className="py-40 relative overflow-hidden bg-[#FDFCFB]">
+        <div className="max-w-3xl mx-auto text-center px-6 relative z-10">
+          <RevealText>
+            <p className="font-playfair text-3xl md:text-5xl leading-tight">
+              We don't follow trends. <br /> 
+              <span className="text-[#B8860B] italic">We follow the thread.</span> <br />
+              Back to where we began.
+            </p>
+          </RevealText>
+          <div className="mt-12">
+            <Link 
+              to="/collections" 
+              className="inline-block px-12 py-5 border border-[#111] text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-[#111] hover:text-white transition-all duration-500"
+            >
+              Enter the Collection
+            </Link>
+          </div>
+        </div>
+        {/* Subtle Watermark Decorative Text */}
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 text-[20vw] font-playfair opacity-[0.02] whitespace-nowrap pointer-events-none">
+          ANNIE PATRICIA ANNIE PATRICIA
+        </div>
       </section>
 
       <Footer />

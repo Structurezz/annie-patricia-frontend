@@ -133,38 +133,72 @@ export const auth = {
    PRODUCTS
 ═══════════════════════════════════════════════════════ */
 
+export interface BackendProductImage {
+  url: string;
+  alt: string;
+  _id: string;
+}
+
+export interface BackendProductSize {
+  size: string;
+  stock: number;
+  _id: string;
+}
+
 export interface BackendProduct {
   _id: string;
   name: string;
+  slug: string;
   description: string;
+  shortDescription?: string;
   price: number;
   comparePrice?: number;
-  images: string[];
+  images: BackendProductImage[];
   category: string;
-  badge?: string;
-  stock: number;
+  badge: string | null;
   designer?: string;
+  material?: string;
+  sizes: BackendProductSize[];
+  inStock: boolean;
+  totalStock: number;
+  tags?: string[];
+  isFeatured?: boolean;
+  isActive?: boolean;
   rating?: number;
-  reviewCount?: number;
+  numReviews?: number;
+  soldCount?: number;
+  gender?: string;
+  colors?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface BackendPagination {
+  total: number;
+  page: number;
+  pages: number;
+  limit: number;
 }
 
 export const products = {
-  getAll: (params?: Record<string, string>) => {
-    const qs = params ? "?" + new URLSearchParams(params).toString() : "";
-    return get<{ success: boolean; products: BackendProduct[]; total: number }>(`/api/products${qs}`);
+  getAll: (params?: Record<string, string | number | boolean>) => {
+    const qs = params && Object.keys(params).length
+      ? "?" + new URLSearchParams(Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))).toString()
+      : "";
+    return get<{ success: boolean; data: BackendProduct[]; pagination: BackendPagination }>(`/api/products${qs}`);
   },
 
   getOne: (id: string) =>
-    get<{ success: boolean; product: BackendProduct }>(`/api/products/${id}`),
+    get<{ success: boolean; data: BackendProduct }>(`/api/products/${id}`),
 
   getFeatured: () =>
-    get<{ success: boolean; products: BackendProduct[] }>("/api/products/featured"),
+    get<{ success: boolean; data: BackendProduct[] }>("/api/products/featured"),
 
   getCategories: () =>
     get<{ success: boolean; categories: string[] }>("/api/products/categories"),
 
   getRelated: (id: string) =>
-    get<{ success: boolean; products: BackendProduct[] }>(`/api/products/${id}/related`),
+    get<{ success: boolean; data: BackendProduct[] }>(`/api/products/${id}/related`),
 
   addReview: (id: string, rating: number, comment: string) =>
     post(`/api/products/${id}/reviews`, { rating, comment }),

@@ -15,8 +15,6 @@ import {
 import Topbar from "../components/TopBar";
 import Footer from "../components/Footer";
 import { useAppSelector } from "../store/hooks";
-import { allProducts } from "../components/data/products";
-
 // ── Mock Orders (in real app: from Redux / API) ──
 interface OrderSummary {
   id: string;

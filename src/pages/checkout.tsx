@@ -20,7 +20,6 @@ import Topbar from "../components/TopBar";
 import Footer from "../components/Footer";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { removeFromCart, updateQuantity, clearCart } from "../store/cartSlice";
-import { allProducts } from "../components/data/products";
 
 // ── Mock Saved Addresses (in real app: from Redux or API) ──
 const mockSavedAddresses = [
@@ -170,7 +169,6 @@ export default function Checkout() {
               >
                 <div className="lg:col-span-2 space-y-5">
                   {cartItems.map((item, i) => {
-                    const p = allProducts.find((x) => x.id === item.id);
                     return (
                       <motion.div
                         key={item.id}
@@ -193,7 +191,7 @@ export default function Checkout() {
                         <div className="flex-1 min-w-0">
                           <Link to={`/product/${item.id}`} className="block">
                             <h3 className="font-medium text-base sm:text-lg line-clamp-1">{item.name}</h3>
-                            <p className="text-xs sm:text-sm text-gray-500">{p?.designer}</p>
+                            <p className="text-xs sm:text-sm text-gray-500">{item.designer}</p>
                           </Link>
                           <div className="flex items-center gap-2 mt-2 sm:mt-3">
                             <div className="flex items-center border rounded-md text-sm">
