@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAppDispatch } from "../store/hooks";
-import { addToCart } from "../store/cartSlice";
+import { addToCartServer } from "../store/cartSlice";
 import type { AdaptedProduct } from "../hooks/useProducts";
 
 const BADGE_STYLE: Record<string, string> = {
@@ -43,20 +43,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   });
 
-  const handleCart = (e: React.MouseEvent) => {
+  const handleCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(
-      addToCart({
-        id: p._id,
-        name: p.name,
-        designer: p.designer,
-        price: p.price,
-        image: p.image,
-      })
-    );
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+  
+    try {
+      await dispatch(
+        addToCartServer({
+          id: p._id,
+          quantity: 1,
+        })
+      ).unwrap();
+  
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1500);
+    } catch (err) {
+      console.error("Failed to add to cart:", err);
+    }
   };
 
   const handleWish = (e: React.MouseEvent) => {

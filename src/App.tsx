@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { fetchProfile, setUser } from "./store/authSlice";
 import { getToken } from "./services/api";
+import { fetchCart } from "./store/cartSlice";
 
 // Homepages
 import Home        from "./pages/homepage";
@@ -24,7 +25,7 @@ import Contact     from "./pages/contact";
 
 // Commerce
 import ProductDetail from "./components/ProductDetail";
-import Cart          from "./pages/cart";
+//import Cart          from "./pages/cart";
 import CheckOut      from "./pages/checkout";
 import Orders        from "./pages/order";
 import OrderDetail   from "./components/OrderDetail";
@@ -43,8 +44,18 @@ function App() {
 
   /* Restore session on mount if token exists */
   useEffect(() => {
-    if (getToken()) dispatch(fetchProfile());
-    else dispatch(setUser(null));
+    const init = async () => {
+      if (getToken()) {
+        await dispatch(fetchProfile());
+      } else {
+        dispatch(setUser(null));
+      }
+  
+      // 🚨 ALWAYS fetch cart (guest or user)
+      await dispatch(fetchCart());
+    };
+  
+    init();
   }, [dispatch]);
 
   return (
@@ -76,7 +87,7 @@ function App() {
       <Route path="/contact" element={<Contact />} />
 
       {/* ── Commerce ── */}
-      <Route path="/cart"       element={<Cart />} />
+      {/* <Route path="/cart"       element={<Cart />} /> */}
       <Route path="/checkout"   element={<CheckOut />} />
       <Route path="/orders"     element={<Orders />} />
       <Route path="/order/:id"  element={<OrderDetail />} />

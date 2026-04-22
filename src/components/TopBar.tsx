@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../hooks/redux";
-import { removeFromCart, updateQuantity } from "../store/cartSlice";
+import { clearCart } from "../store/cartSlice";  
 import { motion, AnimatePresence } from "framer-motion";
 import { useProducts } from "../hooks/useProducts";
 import { useAppSelector as useAuth } from "../store/hooks";
@@ -369,57 +369,61 @@ const TopBar: React.FC = () => {
             </Link>
 
             {/* Right Side Actions - Improved Spacing */}
-            <div className="flex items-center gap-x-1 md:gap-x-2">
-              <button
-                onClick={() => setSearchOpen(true)}
-                className="p-3.5 text-neutral-600 hover:text-black rounded-full hover:bg-neutral-100 transition-all"
-                aria-label="Search"
-              >
-                <SearchIcon className="w-5 h-5" />
-              </button>
+        {/* Right Side Actions */}
+<div className="flex items-center gap-x-1 md:gap-x-2">
+  <button
+    onClick={() => setSearchOpen(true)}
+    className="p-3.5 text-neutral-600 hover:text-black rounded-full hover:bg-neutral-100 transition-all"
+    aria-label="Search"
+  >
+    <SearchIcon className="w-5 h-5" />
+  </button>
 
-              <Link
-                to="/saved"
-                className="hidden md:block p-3.5 text-neutral-600 hover:text-black rounded-full hover:bg-neutral-100 transition-all"
-                aria-label="Wishlist"
-              >
-                <HeartIcon className="w-5 h-5" />
-              </Link>
+  <Link
+    to="/saved"
+    className="hidden md:block p-3.5 text-neutral-600 hover:text-black rounded-full hover:bg-neutral-100 transition-all"
+    aria-label="Wishlist"
+  >
+    <HeartIcon className="w-5 h-5" />
+  </Link>
 
-              {authUser ? (
-                <Link
-                  to="/account"
-                  className="hidden md:flex items-center gap-2.5 px-5 py-2.5 rounded-full hover:bg-neutral-100 transition-all"
-                >
-                  <UserIcon className="w-5 h-5 text-neutral-600" />
-                  <span className="text-sm text-neutral-700 truncate max-w-28">
-                    {authUser.name?.split(" ")[0]}
-                  </span>
-                </Link>
-              ) : (
-                <Link
-                  to="/login"
-                  className="hidden md:block p-3.5 text-neutral-600 hover:text-black rounded-full hover:bg-neutral-100 transition-all"
-                >
-                  <UserIcon className="w-5 h-5" />
-                </Link>
-              )}
+  {authUser ? (
+    <Link
+      to="/account"
+      className="hidden md:flex items-center gap-2.5 px-5 py-2.5 rounded-full hover:bg-neutral-100 transition-all"
+    >
+      <UserIcon className="w-5 h-5 text-neutral-600" />
+      <span className="text-sm text-neutral-700 truncate max-w-28">
+        {authUser.name?.split(" ")[0]}
+      </span>
+    </Link>
+  ) : (
+    <Link
+      to="/login"
+      className="hidden md:block p-3.5 text-neutral-600 hover:text-black rounded-full hover:bg-neutral-100 transition-all"
+    >
+      <UserIcon className="w-5 h-5" />
+    </Link>
+  )}
 
-              {/* Cart Button */}
-              <Link
-                to="/checkout"
-                className="flex items-center gap-3 bg-black hover:bg-neutral-900 text-white text-sm font-light tracking-wider px-7 py-3 rounded-full transition-all active:scale-[0.97]"
-                aria-label="Cart"
-              >
-                <BagIcon className="w-5 h-5" />
-                <span className="hidden md:inline">BAG {cartCount > 0 && `(${cartCount})`}</span>
-                {cartCount > 0 && (
-                  <span className="md:hidden bg-amber-500 text-black text-[10px] font-medium w-5 h-5 flex items-center justify-center rounded-full">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-            </div>
+  {/* FIXED Cart Button - Now opens sidebar instead of going directly to checkout */}
+  <button
+  onClick={() => navigate("/checkout")}
+  className="flex items-center gap-3 bg-black hover:bg-neutral-900 text-white text-sm font-light tracking-wider px-7 py-3 rounded-full transition-all active:scale-[0.97]"
+  aria-label="Cart"
+>
+  <BagIcon className="w-5 h-5" />
+  <span className="hidden md:inline">
+    BAG {cartCount > 0 && `(${cartCount})`}
+  </span>
+
+  {cartCount > 0 && (
+    <span className="md:hidden bg-amber-500 text-black text-[10px] font-medium w-5 h-5 flex items-center justify-center rounded-full">
+      {cartCount}
+    </span>
+  )}
+</button>
+</div>
           </div>
         </div>
       </header>

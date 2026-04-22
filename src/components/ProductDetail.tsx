@@ -4,7 +4,7 @@ import { useParams, Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useAppDispatch } from "../hooks/redux";
 import { useProduct, AdaptedProduct, useProducts } from "../hooks/useProducts";
-import { addToCart } from "../store/cartSlice";
+import { addToCartServer } from "../store/cartSlice";
 import Topbar from "./TopBar";
 import Footer from "./Footer";
 import ProductCard from "./ProductCard";
@@ -57,6 +57,8 @@ export default function ProductDetail() {
 
   const { product, loading: productLoading } = useProduct(id as string);
   const { products: allProductsFromHook } = useProducts();
+  const [cartLoading, setCartLoading] = useState(false);
+
 
   useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [location.pathname]);
 
@@ -67,16 +69,33 @@ export default function ProductDetail() {
     if (first) setSelectedSize(first.label);
     // sync wishlist
     try {
-      const saved = new Set<number>(JSON.parse(localStorage.getItem("wishlist") || "[]"));
-      setWishlisted(saved.has(product.id));
+      const saved = new Set<string>(JSON.parse(localStorage.getItem("wishlist") || "[]"));
+      setWishlisted(saved.has(product._id));
     } catch {}
   }, [product]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product || !selectedSize || !product.inStock) return;
-    dispatch(addToCart({ id: product.id, name: product.name, designer: product.designer, price: product.price, image: product.image }));
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+  
+    if (cartLoading) return;
+    setCartLoading(true);
+  
+    try {
+      await dispatch(
+        addToCartServer({
+          id: product._id,       // ✅ FIXED (_id not id)
+          quantity: qty,
+          size: selectedSize,
+        })
+      ).unwrap();
+  
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    } catch (err) {
+      console.error("Add to cart failed:", err);
+    } finally {
+      setCartLoading(false);
+    }
   };
 
   const handleWishlist = () => {

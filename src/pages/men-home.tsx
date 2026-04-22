@@ -457,12 +457,12 @@ export default function MenHome() {
         >
           <div>
             <p className="text-[10px] tracking-[0.55em] text-[#C9A84C] uppercase mb-4">The Full Edit</p>
-            <h2 className="font-cormorant font-bold text-white text-[clamp(2.5rem,6vw,5rem)] leading-none tracking-tight">
+            <h2 className="font-cormorant font-bold text-black text-[clamp(2.5rem,6vw,5rem)] leading-none tracking-tight">
               Every piece.<br />Every craft.
             </h2>
           </div>
           <Link to="/men/shop"
-            className="flex-shrink-0 px-14 py-5 border border-[#C9A84C] text-[#C9A84C] text-[11px] font-bold tracking-[0.45em] uppercase hover:bg-[#C9A84C] hover:text-[#0B0A09] transition-all duration-300">
+            className="flex-shrink-0 px-14 py-5 border border-[#C9A84C] text-black text-[11px] font-bold tracking-[0.45em] uppercase hover:bg-[#C9A84C] hover:text-[#0B0A09] transition-all duration-300">
             SHOP ALL MEN'S
           </Link>
         </motion.div>
