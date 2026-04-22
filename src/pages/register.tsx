@@ -163,7 +163,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={loading || !agree}
-                className="w-full py-3.5 bg-[#0A0908] text-white text-[11px] font-inter font-medium tracking-[0.2em] hover:bg-[#C9A84C] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3.5 bg-[#0A0908] text-black text-[11px] font-inter font-medium tracking-[0.2em] hover:bg-[#C9A84C] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "CREATING ACCOUNT…" : "CREATE ACCOUNT"}
               </button>
