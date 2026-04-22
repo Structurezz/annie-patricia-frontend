@@ -27,7 +27,7 @@ export default function Register() {
     if (password !== confirm) { setLocalErr("Passwords do not match."); return; }
     if (password.length < 8)  { setLocalErr("Password must be at least 8 characters."); return; }
     const result = await dispatch(registerUser({ firstName, lastName, email, password }));
-    if (registerUser.fulfilled.match(result)) navigate("/account");
+    if (registerUser.fulfilled.match(result)) navigate("/");
   };
 
   const displayErr = localErr || error;
