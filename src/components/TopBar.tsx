@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useProducts } from "../hooks/useProducts";
 import { useAppSelector as useAuth } from "../store/hooks";
 import { logoutUser } from "../store/authSlice";
+import { createPortal } from "react-dom";
 
 /* ─────────────────────────────────────────────────────────────────────
    ICONS
@@ -163,6 +164,88 @@ const TopBar: React.FC = () => {
   const authUser = useAuth(s => s.auth.user);
   const { products: allProducts } = useProducts();
 
+  useEffect(() => {
+    if (mobileOpen) {
+      setSearchOpen(false);
+      setCartOpen(false);
+    }
+  }, [mobileOpen]);
+
+  const MobileLink = ({
+    label,
+    href,
+    onClick,
+  }: {
+    label: string;
+    href: string;
+    onClick: () => void;
+  }) => (
+    <Link
+      to={href}
+      onClick={onClick}
+      className="flex items-center justify-between py-4 border-b border-neutral-100 text-lg"
+    >
+      <span>{label}</span>
+      <ArrowRight className="w-4 h-4 text-neutral-400" />
+    </Link>
+  );
+  
+  const MobileSection = ({
+    title,
+    icon,
+    links,
+    onNavigate,
+  }: {
+    title: string;
+    icon: string;
+    links: { label: string; href: string }[];
+    onNavigate: () => void;
+  }) => {
+    const [open, setOpen] = useState(false);
+  
+    return (
+      <div className="border-b border-neutral-100 pb-2">
+        <button
+          onClick={() => setOpen(!open)}
+          className="flex items-center justify-between w-full py-4 text-lg"
+        >
+          <span className="flex items-center gap-3">
+            <span className="text-xl">{icon}</span>
+            {title}
+          </span>
+  
+          <ChevronDown
+            className={`w-5 h-5 transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+  
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="pl-10 space-y-3 pb-3"
+            >
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={onNavigate}
+                  className="block text-sm text-neutral-600 hover:text-black"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
+
   /* Scroll Effect */
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 10);
@@ -249,7 +332,7 @@ const TopBar: React.FC = () => {
 
       {/* Redesigned Header with Improved Spacing */}
       <header
-        className={`sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-black/5 transition-all duration-300 ${
+        className={`sticky top-0 z-50 bg-white border-b border-black/5 transition-all duration-300 ${
           scrolled ? "shadow-xl shadow-black/5" : ""
         }`}
       >
@@ -665,49 +748,106 @@ const TopBar: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* MOBILE MENU */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-[85] bg-white flex flex-col"
-          >
-            <div className="flex items-center justify-between px-6 h-16 border-b">
-              <Link to="/" onClick={() => setMobileOpen(false)} className="font-serif text-2xl tracking-tight">
-                ANNIE PATRICIA
-              </Link>
-              <button onClick={() => setMobileOpen(false)}>
-                <XIcon className="w-6 h-6" />
-              </button>
-            </div>
+    {/* MOBILE MENU */}
+{/* MOBILE MENU (PORTAL FIX) */}
+<AnimatePresence>
+  {mobileOpen &&
+    typeof window !== "undefined" &&
+    createPortal(
+      <>
+        {/* BACKDROP */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 bg-black z-[9998]"
+        />
 
-            <nav className="flex-1 overflow-y-auto px-6 py-8">
-              {NAV_ITEMS.map(({ label, href, accent }) => (
-                <Link
-                  key={href}
-                  to={href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block py-5 text-xl border-b border-neutral-100 ${accent ? "text-amber-600" : "text-black"}`}
-                >
-                  {label}
-                </Link>
-              ))}
-            </nav>
+        {/* PANEL */}
+        <motion.div
+          initial={{ x: "-100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "-100%" }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-white z-[9999] flex flex-col shadow-2xl"
+        >
+          {/* HEADER */}
+          <div className="flex items-center justify-between px-6 h-16 border-b border-neutral-200">
+            <span className="font-serif text-xl tracking-tight">MENU</span>
+            <button onClick={() => setMobileOpen(false)}>
+              <XIcon className="w-6 h-6" />
+            </button>
+          </div>
 
-            <div className="p-6 border-t">
-              <Link
-                to="/category"
-                onClick={() => setMobileOpen(false)}
-                className="block w-full py-4 bg-black text-white text-center rounded-full tracking-widest"
+          {/* CONTENT */}
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+
+            {/* WOMEN */}
+            <MobileSection
+              title="Women"
+              icon="👗"
+              links={[
+                { label: "All Women", href: "/women/shop" },
+                { label: "Dresses", href: "/category?category=Dresses" },
+                { label: "Tops", href: "/category?category=Tops" },
+                { label: "Skirts", href: "/category?category=Skirts" },
+                { label: "Bubus", href: "/category?category=Bubus" },
+              ]}
+              onNavigate={() => setMobileOpen(false)}
+            />
+
+            {/* MEN */}
+            <MobileSection
+              title="Men"
+              icon="🧥"
+              links={[
+                { label: "All Men", href: "/men/shop" },
+                { label: "Agbada", href: "/category?category=Agbada" },
+                { label: "Kaftan", href: "/category?category=Kaftan" },
+                { label: "Shirts", href: "/category?category=Tops" },
+              ]}
+              onNavigate={() => setMobileOpen(false)}
+            />
+
+            {/* QUICK LINKS */}
+            <MobileLink label="✨ New Arrivals" href="/new-arrivals" onClick={() => setMobileOpen(false)} />
+            <MobileLink label="🔥 Bestsellers" href="/bestsellers" onClick={() => setMobileOpen(false)} />
+            <MobileLink label="🛍 Shop All" href="/category" onClick={() => setMobileOpen(false)} />
+            <MobileLink label="❤️ Saved Items" href="/saved" onClick={() => setMobileOpen(false)} />
+            <MobileLink label="👤 Account" href="/account" onClick={() => setMobileOpen(false)} />
+
+          </div>
+
+          {/* FOOTER */}
+          <div className="p-6 border-t border-neutral-200 space-y-3">
+            <button
+              onClick={() => {
+                setMobileOpen(false);
+                navigate("/checkout");
+              }}
+              className="w-full py-4 bg-black text-white rounded-full tracking-widest text-sm"
+            >
+              VIEW BAG ({cartCount})
+            </button>
+
+            {authUser && (
+              <button
+                onClick={() => {
+                  dispatch(logoutUser());
+                  setMobileOpen(false);
+                }}
+                className="w-full py-3 text-sm text-neutral-500"
               >
-                SHOP ALL
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                Logout
+              </button>
+            )}
+          </div>
+        </motion.div>
+      </>,
+      document.body
+    )}
+</AnimatePresence>
     </>
   );
 };
